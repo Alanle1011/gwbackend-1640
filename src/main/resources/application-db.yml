@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    validation-query: select 1
+    hikari:
+      schema: ${DB_SCHEMA:postgres}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: ${DB_JPA_HIBERNATE_DDL_AUTO:validate}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    create-schemas: false
+    schemas: ${FLYWAY_SCHEMA:flyway}
+    enabled: false

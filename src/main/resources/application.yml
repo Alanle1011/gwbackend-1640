@@ -1,0 +1,30 @@
+server:
+  port: 5001
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: GWBackend
+  profiles:
+    include: db
+
+management:
+  server:
+    port: 5002
+  endpoints:
+    web:
+      base-path: /manage
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.example.backend1640: INFO
+  file:
+    name: logs/gw-backend.log
