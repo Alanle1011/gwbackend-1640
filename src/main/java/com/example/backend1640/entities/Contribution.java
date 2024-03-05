@@ -19,7 +19,7 @@ public class Contribution {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
     private User user;
 
     @Column(name = "STUDENT_ID", nullable = false)
@@ -42,4 +42,5 @@ public class Contribution {
 
     @Column(name = "UPDATED_AT", nullable = false)
     private Timestamp updated_at;
+    
 }
