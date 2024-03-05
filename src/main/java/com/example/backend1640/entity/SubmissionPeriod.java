@@ -1,9 +1,9 @@
-package com.example.backend1640.entities;
+package com.example.backend1640.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Data
 @AllArgsConstructor
@@ -23,17 +23,17 @@ public class SubmissionPeriod {
     private String name;
 
     @Column(name = "START_DATE", nullable = false)
-    private Timestamp start_date;
+    private Date start_date;
 
     @Column(name = "END_DATE", nullable = false)
-    private Timestamp closure_date;
+    private Date closure_date;
 
     @Column(name = "FINAL_CLOSURE_DATE", nullable = false)
-    private Timestamp final_closure_date;
+    private Date final_closure_date;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
 }

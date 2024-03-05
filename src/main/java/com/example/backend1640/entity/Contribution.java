@@ -1,9 +1,9 @@
-package com.example.backend1640.entities;
+package com.example.backend1640.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class Contribution {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID")
-    private User user;
+    private User uploaded_user;
 
     @Column(name = "STUDENT_ID", nullable = false)
     private String student_id;
@@ -38,8 +38,8 @@ public class Contribution {
     private String status;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
 }

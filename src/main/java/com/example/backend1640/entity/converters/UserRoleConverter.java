@@ -1,4 +1,4 @@
-package com.example.backend1640.entities.converters;
+package com.example.backend1640.entity.converters;
 
 import com.example.backend1640.constants.UserRoleEnum;
 import jakarta.persistence.AttributeConverter;
