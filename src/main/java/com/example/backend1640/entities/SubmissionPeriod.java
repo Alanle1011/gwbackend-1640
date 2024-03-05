@@ -25,7 +25,7 @@ public class SubmissionPeriod {
     @Column(name = "START_DATE", nullable = false)
     private Timestamp start_date;
 
-    @Column(name = "END_DATE", nullable = false)
+    @Column(name = "CLOSURE_DATE", nullable = false)
     private Timestamp closure_date;
 
     @Column(name = "FINAL_CLOSURE_DATE", nullable = false)

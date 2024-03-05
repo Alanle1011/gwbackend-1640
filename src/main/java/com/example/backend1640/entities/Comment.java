@@ -19,11 +19,11 @@ public class Comment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
     private Contribution contribution;
 
     @Column(name = "CONTENT", nullable = false)
