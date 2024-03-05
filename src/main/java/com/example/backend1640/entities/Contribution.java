@@ -20,7 +20,11 @@ public class Contribution {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID", insertable=false, updatable=false)
-    private User user;
+    private User uploaded_user_id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
+    private User approved_coordinator_id;
 
     @Column(name = "STUDENT_ID", nullable = false)
     private String student_id;
