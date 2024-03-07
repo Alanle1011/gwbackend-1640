@@ -22,7 +22,7 @@ public class Faculty {
     @Column(name = "FACULTY_NAME", nullable = false)
     private String faculty_name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID", insertable=false, updatable=false)
     private User manager_id;
 

@@ -7,6 +7,4 @@ import lombok.Setter;
 @Setter
 public class FacultyDTO {
     private String faculty_name;
-
-    //Don't know to add manager_id or not
 }
