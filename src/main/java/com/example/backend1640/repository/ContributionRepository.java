@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ContributeRepository extends JpaRepository<Contribution , Long> {
+public interface ContributionRepository extends JpaRepository<Contribution , Long> {
     Optional<Contribution> findById(Long id);
 }

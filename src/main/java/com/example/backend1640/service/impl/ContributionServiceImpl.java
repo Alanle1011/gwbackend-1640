@@ -4,23 +4,18 @@ import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.dto.ContributionDTO;
 import com.example.backend1640.dto.CreateContributionDTO;
 import com.example.backend1640.entity.Contribution;
-import com.example.backend1640.entity.User;
-import com.example.backend1640.exception.UserNotExistsException;
-import com.example.backend1640.repository.ContributeRepository;
-import com.example.backend1640.repository.UserRepository;
+import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.service.ContributionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class ContributionServiceImpl implements ContributionService {
-    private final ContributeRepository contributionRepository;
-    private final UserRepository userRepository;
+    private final ContributionRepository contributionRepository;
 
-    public ContributionServiceImpl(ContributeRepository contributionRepository, UserRepository userRepository) {
+    public ContributionServiceImpl(ContributionRepository contributionRepository) {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
     }
