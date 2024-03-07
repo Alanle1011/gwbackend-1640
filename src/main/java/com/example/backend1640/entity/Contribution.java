@@ -40,6 +40,11 @@ public class Contribution {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
+    @OneToOne
+    @JoinColumn(name = "ID")
+    @Column(name = "SUBMISSION_PERIOD_ID", nullable = false)
+    private SubmissionPeriod submission_period_id;
+
     @Column(name = "STATUS", nullable = false)
     @Convert(converter = StatusConverter.class)
     private StatusEnum status;
