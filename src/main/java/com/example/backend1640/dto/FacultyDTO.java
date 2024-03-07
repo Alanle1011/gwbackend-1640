@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FacultyDTO {
-    private String faculty_name;
+    private String facultyName;
 }

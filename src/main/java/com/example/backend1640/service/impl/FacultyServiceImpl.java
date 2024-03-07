@@ -3,8 +3,12 @@ package com.example.backend1640.service.impl;
 import com.example.backend1640.dto.CreateFacultyDTO;
 import com.example.backend1640.dto.FacultyDTO;
 import com.example.backend1640.entity.Faculty;
+import com.example.backend1640.entity.User;
+import com.example.backend1640.exception.FacultyAlreadyExistsException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
+import com.example.backend1640.exception.UserNotExistsException;
 import com.example.backend1640.repository.FacultyRepository;
+import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.FacultyService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -14,20 +18,26 @@ import java.util.Optional;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
-
     private final FacultyRepository facultyRepository;
 
-    public FacultyServiceImpl(FacultyRepository facultyRepository) {
+    private final UserRepository userRepository;
+
+    public FacultyServiceImpl(FacultyRepository facultyRepository, UserRepository userRepository) {
         this.facultyRepository = facultyRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public FacultyDTO createFaculty(CreateFacultyDTO facultyDTO) {
-        validateFacultyExists(facultyDTO.getFaculty_name());
+        validateFacultyExists(facultyDTO.getFacultyName());
         Faculty faculty = new Faculty();
+
+        User managerId = validateUserExists(facultyDTO.getManagerId());
+
         BeanUtils.copyProperties(facultyDTO, faculty);
-        faculty.setCreated_at(new Date());
-        faculty.setUpdated_at(new Date());
+        faculty.setCreatedAt(new Date());
+        faculty.setUpdatedAt(new Date());
+        faculty.setManagerId(managerId);
 
         //Save Faculty
         Faculty savedFaculty = facultyRepository.save(faculty);
@@ -38,10 +48,19 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     private void validateFacultyExists(String facultyName) {
-        Optional<Faculty> optionalFaculty = facultyRepository.findByName(facultyName);
+        Optional<Faculty> optionalFaculty = facultyRepository.findByFacultyName(facultyName);
 
         if (optionalFaculty.isPresent()) {
-            throw new UserAlreadyExistsException("FacultyAlreadyExists");
+            throw new FacultyAlreadyExistsException("FacultyAlreadyExists");
         }
+    }
+
+    private User validateUserExists(Long managerId) {
+        Optional<User> optionalUser = userRepository.findById(managerId);
+
+        if (optionalUser.isEmpty()) {
+            throw new UserNotExistsException("UserNotExists");
+        }
+        return optionalUser.get();
     }
 }

@@ -25,8 +25,8 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         validateSubmissionPeriodExists(submissionPeriodDTO.getName());
         SubmissionPeriod submissionPeriod = new SubmissionPeriod();
         BeanUtils.copyProperties(submissionPeriodDTO, submissionPeriod);
-        submissionPeriod.setCreated_at(new Date());
-        submissionPeriod.setUpdated_at(new Date());
+        submissionPeriod.setCreatedAt(new Date());
+        submissionPeriod.setUpdatedAt(new Date());
 
         //Save Submission Period
         SubmissionPeriod savedSubmissionPeriod = submissionPeriodRepository.save(submissionPeriod);

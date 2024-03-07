@@ -21,18 +21,18 @@ public class Contribution {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID", insertable=false, updatable=false)
-    private User uploaded_user_id;
+    @JoinColumn(name = "UPLOADED_USER_ID", referencedColumnName = "id")
+    private User uploadedUserId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID", insertable=false, updatable=false)
-    private User approved_coordinator_id;
+    @JoinColumn(name = "APPROVED_COORDINATOR_ID", referencedColumnName = "id")
+    private User approvedCoordinatorId;
 
     @Column(name = "STUDENT_ID", nullable = false)
-    private String student_id;
+    private String studentId;
 
     @Column(name = "STUDENT_NAME", nullable = false)
-    private String student_name;
+    private String studentName;
 
     @Column(name = "TITLE", nullable = false)
     private String title;
@@ -41,17 +41,17 @@ public class Contribution {
     private String content;
 
     @OneToOne
-    @JoinColumn(name = "ID")
-    private SubmissionPeriod submission_period_id;
+    @JoinColumn(name = "SUBMISSION_PERIOD_ID", referencedColumnName = "id")
+    private SubmissionPeriod submissionPeriodId;
 
     @Column(name = "STATUS", nullable = false)
     @Convert(converter = StatusConverter.class)
     private StatusEnum status;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Date updated_at;
+    private Date updatedAt;
     
 }

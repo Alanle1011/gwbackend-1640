@@ -28,17 +28,17 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     public ContributionDTO createContribution(CreateContributionDTO contributionDTO) {
-        User uploader = validateUserNotExists(contributionDTO.getUploaded_user_id());
+        User uploader = validateUserNotExists(contributionDTO.getUploadedUserId());
 //        User coordinator = validateUserNotExists(uploader.getFaculty());
 
         Contribution contribution = new Contribution();
         BeanUtils.copyProperties(contributionDTO, contribution);
-        contribution.setCreated_at(new Date());
-        contribution.setUpdated_at(new Date());
+        contribution.setCreatedAt(new Date());
+        contribution.setUpdatedAt(new Date());
         contribution.setStatus(StatusEnum.OPEN);
-        contribution.setUploaded_user_id(uploader);
+        contribution.setUploadedUserId(uploader);
 
-        contribution.setApproved_coordinator_id(null);//TESTTTT
+        contribution.setApprovedCoordinatorId(null);//TESTTTT
 
         //Save
         Contribution savedContribution = contributionRepository.save(contribution);
