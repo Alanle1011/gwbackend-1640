@@ -32,7 +32,7 @@ public class User {
     private String user_role;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
     private Faculty faculty;
 
     @Column(name = "CREATED_AT", nullable = false)

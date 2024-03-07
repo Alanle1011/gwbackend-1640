@@ -20,7 +20,7 @@ public class Image {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "ID", insertable=false, updatable=false)
     private Contribution contribution;
 
     @Column(name = "PATH", nullable = false)
