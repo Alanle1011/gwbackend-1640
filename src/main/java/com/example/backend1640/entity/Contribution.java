@@ -42,7 +42,6 @@ public class Contribution {
 
     @OneToOne
     @JoinColumn(name = "ID")
-    @Column(name = "SUBMISSION_PERIOD_ID", nullable = false)
     private SubmissionPeriod submission_period_id;
 
     @Column(name = "STATUS", nullable = false)
