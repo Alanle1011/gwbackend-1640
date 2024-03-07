@@ -1,9 +1,11 @@
-package com.example.backend1640.entities;
+package com.example.backend1640.entity;
 
+import com.example.backend1640.constants.UserRoleEnum;
+import com.example.backend1640.entity.converters.UserRoleConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -29,15 +31,16 @@ public class User {
     private String email;
 
     @Column(name = "USER_ROLE", nullable = false)
-    private String user_role;
+    @Convert(converter= UserRoleConverter.class)
+    private UserRoleEnum user_role;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID", insertable=false, updatable=false)
     private Faculty faculty;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
 }

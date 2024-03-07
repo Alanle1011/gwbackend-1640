@@ -1,16 +1,16 @@
-package com.example.backend1640.entities;
+package com.example.backend1640.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "FACULTIES")
+@Table(name = "FACULTY")
 @Getter
 @Setter
 public class Faculty {
@@ -23,8 +23,8 @@ public class Faculty {
     private String faculty_name;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
 }

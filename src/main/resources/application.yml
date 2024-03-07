@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: GWBackend
+    name: GW Webservice
   profiles:
     include: db
 

@@ -4,13 +4,16 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/gw
     username: postgres
     password: postgres
     hikari:
-      schema: postgres
+      schema: gwbackend
   jpa:
     show-sql: false
+    properties:
+      hibernate:
+        default_schema: gwbackend
   flyway:
     create-schemas: true
     schemas: flyway

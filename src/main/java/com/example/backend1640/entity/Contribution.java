@@ -1,16 +1,18 @@
-package com.example.backend1640.entities;
+package com.example.backend1640.entity;
 
+import com.example.backend1640.constants.StatusEnum;
+import com.example.backend1640.entity.converters.StatusConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "CONTRIBUTIONS")
+@Table(name = "CONTRIBUTION")
 @Getter
 @Setter
 public class Contribution {
@@ -38,13 +40,18 @@ public class Contribution {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
+    @OneToOne
+    @JoinColumn(name = "ID")
+    private SubmissionPeriod submission_period_id;
+
     @Column(name = "STATUS", nullable = false)
-    private String status;
+    @Convert(converter = StatusConverter.class)
+    private StatusEnum status;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp created_at;
+    private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
     
 }
