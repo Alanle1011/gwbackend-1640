@@ -3,14 +3,14 @@ package com.example.backend1640.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "SUBMISSION_PERIODS")
+@Table(name = "SUBMISSION_PERIOD")
 @Getter
 @Setter
 public class SubmissionPeriod {
@@ -26,7 +26,7 @@ public class SubmissionPeriod {
     private Date start_date;
 
     @Column(name = "CLOSURE_DATE", nullable = false)
-    private Timestamp closure_date;
+    private Date closure_date;
 
     @Column(name = "FINAL_CLOSURE_DATE", nullable = false)
     private Date final_closure_date;

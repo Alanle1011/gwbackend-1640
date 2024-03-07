@@ -1,16 +1,18 @@
 package com.example.backend1640.entity;
 
+import com.example.backend1640.constants.StatusEnum;
+import com.example.backend1640.entity.converters.StatusConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "CONTRIBUTIONS")
+@Table(name = "CONTRIBUTION")
 @Getter
 @Setter
 public class Contribution {
@@ -39,12 +41,13 @@ public class Contribution {
     private String content;
 
     @Column(name = "STATUS", nullable = false)
-    private String status;
+    @Convert(converter = StatusConverter.class)
+    private StatusEnum status;
 
     @Column(name = "CREATED_AT", nullable = false)
     private Date created_at;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updated_at;
+    private Date updated_at;
     
 }

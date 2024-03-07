@@ -2,8 +2,8 @@ package com.example.backend1640.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ContributionAlreadyExistsException extends LocalizedException {
-    public ContributionAlreadyExistsException(String message) {
+public class UserAlreadyExistsException extends LocalizedException {
+    public UserAlreadyExistsException(String message) {
         super(message);
     }
 

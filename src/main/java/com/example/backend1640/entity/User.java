@@ -1,9 +1,11 @@
 package com.example.backend1640.entity;
 
+import com.example.backend1640.constants.UserRoleEnum;
+import com.example.backend1640.entity.converters.UserRoleConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +31,8 @@ public class User {
     private String email;
 
     @Column(name = "USER_ROLE", nullable = false)
-    private String user_role;
+    @Convert(converter= UserRoleConverter.class)
+    private UserRoleEnum user_role;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ID", insertable=false, updatable=false)

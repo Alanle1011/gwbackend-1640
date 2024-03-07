@@ -3,16 +3,17 @@ package com.example.backend1640.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "COMMENTS")
 @Getter
 @Setter
+@Table(name = "COMMENTS")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,14 +3,14 @@ package com.example.backend1640.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "FACULTIES")
+@Table(name = "FACULTY")
 @Getter
 @Setter
 public class Faculty {
