@@ -1,5 +1,6 @@
 package com.example.backend1640.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class SubmissionPeriod {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
