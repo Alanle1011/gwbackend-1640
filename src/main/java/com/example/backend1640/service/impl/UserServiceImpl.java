@@ -48,7 +48,9 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         UserDTO responseUserDTO = new UserDTO();
         BeanUtils.copyProperties(savedUser, responseUserDTO );
-        responseUserDTO.setFaculty(savedUser.getFacultyId().getFacultyName());
+        if(savedUser.getUserRole() == UserRoleEnum.STUDENT){
+            responseUserDTO.setFaculty(savedUser.getFacultyId().getFacultyName());
+        }
 
         return responseUserDTO;
     }
