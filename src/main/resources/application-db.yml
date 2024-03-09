@@ -11,7 +11,12 @@ spring:
     hibernate:
       ddl-auto: ${DB_JPA_HIBERNATE_DDL_AUTO:validate}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   flyway:
     create-schemas: false
     schemas: ${FLYWAY_SCHEMA:flyway}
     enabled: false
+
+  jackson:
+    date-format: dd/MM/yyyy HH:mm
+    time-zone: GMT+7

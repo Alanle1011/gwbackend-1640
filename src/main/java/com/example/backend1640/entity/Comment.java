@@ -20,19 +20,19 @@ public class Comment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID", insertable=false, updatable=false)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID", insertable=false, updatable=false)
+    @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
     private Contribution contribution;
 
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Date updated_at;
+    private Date updatedAt;
 }

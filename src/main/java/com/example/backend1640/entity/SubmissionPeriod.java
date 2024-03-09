@@ -1,5 +1,6 @@
 package com.example.backend1640.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class SubmissionPeriod {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,17 +23,17 @@ public class SubmissionPeriod {
     private String name;
 
     @Column(name = "START_DATE", nullable = false)
-    private Date start_date;
+    private Date startDate;
 
     @Column(name = "CLOSURE_DATE", nullable = false)
-    private Date closure_date;
+    private Date closureDate;
 
     @Column(name = "FINAL_CLOSURE_DATE", nullable = false)
-    private Date final_closure_date;
+    private Date finalClosureDate;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Date updated_at;
+    private Date updatedAt;
 }

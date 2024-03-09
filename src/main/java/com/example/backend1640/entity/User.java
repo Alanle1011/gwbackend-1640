@@ -32,15 +32,11 @@ public class User {
 
     @Column(name = "USER_ROLE", nullable = false)
     @Convert(converter= UserRoleConverter.class)
-    private UserRoleEnum user_role;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ID", insertable=false, updatable=false)
-    private Faculty faculty;
+    private UserRoleEnum userRole;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Date updated_at;
+    private Date updatedAt;
 }

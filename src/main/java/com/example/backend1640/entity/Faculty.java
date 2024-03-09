@@ -20,11 +20,15 @@ public class Faculty {
     private Long id;
 
     @Column(name = "FACULTY_NAME", nullable = false)
-    private String faculty_name;
+    private String facultyName;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "MANAGER_ID", referencedColumnName = "id")
+    private User managerId;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Date updated_at;
+    private Date updatedAt;
 }

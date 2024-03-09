@@ -10,6 +10,6 @@ import lombok.Setter;
 public class UserDTO {
     private String username;
     private String email;
-    private UserRoleEnum user_role;
+    private UserRoleEnum userRole;
     private Faculty faculty;
 }
