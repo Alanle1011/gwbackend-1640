@@ -10,6 +10,7 @@ spring:
     include: db
   jackson:
     date-format: dd/MM/yyyy HH:mm
+    time-zone: GMT+7
 
 management:
   server:

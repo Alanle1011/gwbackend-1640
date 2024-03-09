@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("contribute")
+@RequestMapping("contribution")
 public class ContributionController {
     private final ContributionService contributionService;
 
@@ -18,8 +18,8 @@ public class ContributionController {
     }
 
     @PostMapping
-    public ContributionDTO createContribution(@RequestBody CreateContributionDTO contributeDTO) {
-        return contributionService.createContribution(contributeDTO);
+    public ContributionDTO createContribution(@RequestBody CreateContributionDTO contributionDTO) {
+        return contributionService.createContribution(contributionDTO);
     }
 
 
