@@ -15,4 +15,5 @@ public class CreateContributionDTO {
     private String content;
     private Long imageId;
     private Long documentId;
+    private Long submissionPeriodId;
 }

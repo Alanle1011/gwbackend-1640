@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SubmissionPeriodRepository extends JpaRepository<SubmissionPeriod, Long> {
     Optional<SubmissionPeriod> findByName(String name);
+    Optional<SubmissionPeriod> findById(Long id);
 }

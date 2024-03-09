@@ -9,6 +9,8 @@ import com.example.backend1640.service.SubmissionPeriodService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -21,10 +23,14 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
     }
 
     @Override
-    public SubmissionPeriodDTO createSubmissionPeriod(CreateSubmissionPeriodDTO submissionPeriodDTO) {
+    public SubmissionPeriodDTO createSubmissionPeriod(CreateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException {
         validateSubmissionPeriodExists(submissionPeriodDTO.getName());
         SubmissionPeriod submissionPeriod = new SubmissionPeriod();
-        BeanUtils.copyProperties(submissionPeriodDTO, submissionPeriod);
+
+        submissionPeriod.setName(submissionPeriodDTO.getName());
+        submissionPeriod.setStartDate(new SimpleDateFormat("dd-MM-yyyy").parse(submissionPeriodDTO.getStartDate()));
+        submissionPeriod.setClosureDate(new SimpleDateFormat("dd-MM-yyyy").parse(submissionPeriodDTO.getClosureDate()));
+        submissionPeriod.setFinalClosureDate(new SimpleDateFormat("dd-MM-yyyy").parse(submissionPeriodDTO.getFinalClosureDate()));
         submissionPeriod.setCreatedAt(new Date());
         submissionPeriod.setUpdatedAt(new Date());
 

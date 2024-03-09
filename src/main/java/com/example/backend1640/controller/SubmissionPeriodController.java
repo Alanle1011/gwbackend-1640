@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("submission_period")
 public class SubmissionPeriodController {
@@ -19,7 +21,7 @@ public class SubmissionPeriodController {
     }
 
     @PostMapping
-    public SubmissionPeriodDTO createSubmissionPeriod(@Validated @RequestBody CreateSubmissionPeriodDTO submissionPeriodDTO){
+    public SubmissionPeriodDTO createSubmissionPeriod(@Validated @RequestBody CreateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException {
         return submissionPeriodService.createSubmissionPeriod(submissionPeriodDTO);
     }
 }
