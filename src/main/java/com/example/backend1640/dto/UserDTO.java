@@ -11,5 +11,5 @@ public class UserDTO {
     private String username;
     private String email;
     private UserRoleEnum userRole;
-    private Faculty faculty;
+    private String faculty;
 }

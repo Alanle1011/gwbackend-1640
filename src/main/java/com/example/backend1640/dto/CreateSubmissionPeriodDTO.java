@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 public class CreateSubmissionPeriodDTO {
     private String name;
-    private Date startDate;
-    private Date closureDate;
-    private Date finalClosureDate;
+    private String startDate;
+    private String closureDate;
+    private String finalClosureDate;
 }
