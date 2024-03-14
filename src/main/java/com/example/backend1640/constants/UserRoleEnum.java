@@ -5,6 +5,8 @@ public enum UserRoleEnum {
 
     MANAGER,
 
+    COORDINATOR,
+
     STUDENT,
 
     GUEST
