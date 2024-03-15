@@ -20,8 +20,12 @@ spring:
     schemas: flyway
     enabled: true
     locations: classpath:db/migration,classpath:db/local
-
   jackson:
     date-format: dd/MM/yyyy HH:mm
     time-zone: GMT+7
-
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 200MB
