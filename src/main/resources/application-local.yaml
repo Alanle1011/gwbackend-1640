@@ -13,6 +13,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
+        ddl-auto: update
         default_schema: gwbackend
   flyway:
     create-schemas: true
