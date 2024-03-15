@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public interface DocumentService {
-    Document saveDocument(MultipartFile file) throws IOException;
+    void saveDocument(MultipartFile file) throws IOException;
     Optional<Document> getDocument(Long id);
-    List<Document> getAllDocument();
+    List<Document> getAllDocuments();
 }

@@ -25,13 +25,13 @@ public class DocumentController {
 
     @GetMapping
     public String getAllDocument(Model model){
-        List<Document> documents = documentService.getAllDocument();
+        List<Document> documents = documentService.getAllDocuments();
         model.addAttribute("documents", documents);
         return "document";
     }
 
     @PostMapping
-    public String saveDocument(@RequestParam("files") MultipartFile[] files) throws IOException {
+    public String saveDocument(@RequestParam("documents") MultipartFile[] files) throws IOException {
         for (MultipartFile file : files) {
             documentService.saveDocument(file);
         }

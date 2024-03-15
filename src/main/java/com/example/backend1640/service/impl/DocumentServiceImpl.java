@@ -26,7 +26,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document saveDocument(MultipartFile file) {
+    public void saveDocument(MultipartFile file) {
         Document document = new Document();
 
         document.setName(file.getOriginalFilename());
@@ -40,9 +40,8 @@ public class DocumentServiceImpl implements DocumentService {
         document.setUpdatedAt(new Date());
 
         if (validateDocumentIsPDF(document)) {
-            return documentRepository.save(document);
-        }
-        else
+            documentRepository.save(document);
+        } else
             throw new DocumentNotPDFException("DocumentIsNotPDF");
     }
 
@@ -52,7 +51,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<Document> getAllDocument() {
+    public List<Document> getAllDocuments() {
         return documentRepository.findAll();
     }
 
