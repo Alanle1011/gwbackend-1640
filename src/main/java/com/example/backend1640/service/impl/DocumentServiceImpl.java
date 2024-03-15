@@ -3,6 +3,7 @@ package com.example.backend1640.service.impl;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Document;
 import com.example.backend1640.exception.ContributionNotExistsException;
+import com.example.backend1640.exception.DocumentNotPDFException;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.DocumentRepository;
 import com.example.backend1640.service.DocumentService;
@@ -25,16 +26,24 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document saveDocument(MultipartFile file) throws IOException {
+    public Document saveDocument(MultipartFile file) {
         Document document = new Document();
 
         document.setName(file.getOriginalFilename());
         document.setType(file.getContentType());
-        document.setData(file.getBytes());
+        try {
+            document.setData(file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         document.setCreatedAt(new Date());
         document.setUpdatedAt(new Date());
 
-        return documentRepository.save(document);
+        if (validateDocumentIsPDF(document)) {
+            return documentRepository.save(document);
+        }
+        else
+            throw new DocumentNotPDFException("DocumentIsNotPDF");
     }
 
     @Override
@@ -54,5 +63,9 @@ public class DocumentServiceImpl implements DocumentService {
             throw new ContributionNotExistsException("ContributionNotExists");
         }
         return optionalContribution.get();
+    }
+
+    private boolean validateDocumentIsPDF(Document document) {
+        return document.getType().equals("application/pdf");
     }
 }
