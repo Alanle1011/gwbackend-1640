@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "IMAGE")
+@Table(name = "IMAGES")
 @Getter
 @Setter
 public class Image {

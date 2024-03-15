@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "SUBMISSION_PERIOD")
+@Table(name = "SUBMISSION_PERIODS")
 @Getter
 @Setter
 public class SubmissionPeriod {
