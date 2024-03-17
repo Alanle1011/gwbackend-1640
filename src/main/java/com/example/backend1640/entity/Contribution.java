@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "CONTRIBUTION")
+@Table(name = "CONTRIBUTIONS")
 @Getter
 @Setter
 public class Contribution {

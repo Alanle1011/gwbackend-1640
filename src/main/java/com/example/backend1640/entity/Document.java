@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "DOCUMENT")
+@Table(name = "DOCUMENTS")
 @Getter
 @Setter
 public class Document {
@@ -21,10 +21,17 @@ public class Document {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
-    private Contribution contribution;
+    private Contribution contributionId;
 
-    @Column(name = "PATH", nullable = false)
-    private String path;
+    @Column(name = "NAME", nullable = false)
+    private String name;
+
+    @Column(name = "TYPE", nullable = false)
+    private String type;
+
+    @Lob
+    @Column(name = "DATA", nullable = false)
+    private byte[] data;
 
     @Column(name = "CREATED_AT", nullable = false)
     private Date createdAt;
