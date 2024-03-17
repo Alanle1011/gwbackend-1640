@@ -31,9 +31,9 @@ public class ImageController {
     }
 
     @PostMapping
-    public String saveImage(@RequestParam("images") MultipartFile[] files) throws IOException {
+    public String saveImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value="contributionId", required=true) String contributionId) throws IOException {
         for (MultipartFile file : files) {
-            imageService.saveImage(file);
+            imageService.saveImage(file, contributionId);
         }
 
         return "redirect:/";

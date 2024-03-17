@@ -31,9 +31,9 @@ public class DocumentController {
     }
 
     @PostMapping
-    public String saveDocument(@RequestParam("documents") MultipartFile[] files) throws IOException {
+    public String saveDocument(@RequestParam("documents") MultipartFile[] files, @RequestParam(value="contributionId", required=true) String contributionId) throws IOException {
         for (MultipartFile file : files) {
-            documentService.saveDocument(file);
+            documentService.saveDocument(file, contributionId);
         }
 
         return "redirect:/";

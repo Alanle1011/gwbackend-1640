@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public interface ImageService {
-    void saveImage(MultipartFile file) throws IOException;
+    void saveImage(MultipartFile file, String contributionId) throws IOException;
     Optional<Image> getImage(Long id);
     List<Image> getAllImages();
 }

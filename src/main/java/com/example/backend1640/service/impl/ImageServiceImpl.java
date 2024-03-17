@@ -27,7 +27,9 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void saveImage(MultipartFile file) {
+    public void saveImage(MultipartFile file, String contributionId) {
+        Contribution contribution = validateContributionExists(Long.valueOf(contributionId));
+
         Image image = new Image();
 
         image.setName(file.getOriginalFilename());
@@ -39,6 +41,7 @@ public class ImageServiceImpl implements ImageService {
         }
         image.setCreatedAt(new Date());
         image.setUpdatedAt(new Date());
+        image.setContributionId(contribution);
 
         if (validateImageIsValid(image)) {
             imageRepository.save(image);

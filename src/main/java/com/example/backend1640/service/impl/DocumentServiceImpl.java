@@ -26,7 +26,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void saveDocument(MultipartFile file) {
+    public void saveDocument(MultipartFile file, String contributionId) {
+        Contribution contribution = validateContributionExists(Long.valueOf(contributionId));
+
         Document document = new Document();
 
         document.setName(file.getOriginalFilename());
@@ -38,6 +40,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
         document.setCreatedAt(new Date());
         document.setUpdatedAt(new Date());
+        document.setContributionId(contribution);
 
         if (validateDocumentIsPDF(document)) {
             documentRepository.save(document);
