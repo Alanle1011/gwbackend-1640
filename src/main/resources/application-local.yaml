@@ -4,7 +4,7 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/gw
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
     hikari:
