@@ -11,5 +11,6 @@ import lombok.*;
 public class LoginDTO {
     private String message;
     private Boolean status;
+    private Long userId;
     private UserRoleEnum role;
 }
