@@ -6,10 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateUserDTO {
+public class UpdateUserDTO {
+    private Long id;
     private String name;
     private String password;
     private String email;
-    private UserRoleEnum userRole;
     private Long faculty;
 }

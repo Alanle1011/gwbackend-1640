@@ -4,9 +4,8 @@ import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.ContributionDTO;
 import com.example.backend1640.dto.CreateContributionDTO;
-import com.example.backend1640.entity.Contribution;
-import com.example.backend1640.entity.SubmissionPeriod;
-import com.example.backend1640.entity.User;
+import com.example.backend1640.dto.ReadContributionDTO;
+import com.example.backend1640.entity.*;
 import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
 import com.example.backend1640.exception.UploaderNotStudentException;
 import com.example.backend1640.exception.UserNotExistsException;
@@ -19,7 +18,9 @@ import com.example.backend1640.service.ContributionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,8 +67,27 @@ public class ContributionServiceImpl implements ContributionService {
         ContributionDTO returnedContribution = new ContributionDTO();
         BeanUtils.copyProperties(savedContribution, returnedContribution);
         returnedContribution.setUploadedUserId(savedContribution.getUploadedUserId().getId());
+        returnedContribution.setId(savedContribution.getId());
 
         return returnedContribution;
+    }
+
+    @Override
+    public List<ReadContributionDTO> findAll() {
+        List<Contribution> contributions = contributionRepository.findAll();
+        List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
+
+        for (Contribution contribution : contributions) {
+            ReadContributionDTO readContributionDTO = new ReadContributionDTO();
+            readContributionDTO.setTitle(contribution.getTitle());
+            readContributionDTO.setContent(contribution.getContent());
+            readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+            readContributionDTO.setSubmissionPeriodId(contribution.getSubmissionPeriodId().getId());
+
+            readContributionDTOS.add(readContributionDTO);
+        }
+
+        return readContributionDTOS;
     }
 
     private SubmissionPeriod validateSubmissionPeriodNotExists(Long submissionPeriodId) {

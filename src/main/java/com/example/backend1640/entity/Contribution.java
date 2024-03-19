@@ -28,12 +28,6 @@ public class Contribution {
     @JoinColumn(name = "APPROVED_COORDINATOR_ID", referencedColumnName = "id")
     private User approvedCoordinatorId;
 
-    @Column(name = "STUDENT_ID", nullable = false)
-    private String studentId;
-
-    @Column(name = "STUDENT_NAME", nullable = false)
-    private String studentName;
-
     @Column(name = "TITLE", nullable = false)
     private String title;
 
