@@ -11,9 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContributionDTO {
+    private Long id;
     private Long uploadedUserId;
-    private String studentId;
-    private String studentName;
     private String title;
     private String content;
     private Long imageId;

@@ -9,8 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateContributionDTO {
     private Long uploadedUserId;
-    private String studentId;
-    private String studentName;
     private String title;
     private String content;
     private Long imageId;
