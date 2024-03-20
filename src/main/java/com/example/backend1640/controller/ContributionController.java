@@ -2,6 +2,7 @@ package com.example.backend1640.controller;
 
 import com.example.backend1640.dto.ContributionDTO;
 import com.example.backend1640.dto.CreateContributionDTO;
+import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
 import com.example.backend1640.dto.ReadContributionDTO;
 import com.example.backend1640.service.ContributionService;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,18 @@ public class ContributionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReadContributionDTO>> getAllContributions() {
-        List<ReadContributionDTO> contributions = contributionService.findAll();
-        return new ResponseEntity<>(contributions, HttpStatus.OK);
+    public List<ReadContributionDTO> getAllContributions() {
+        return contributionService.findAll();
+    }
+
+    @GetMapping("coordinator/{id}")
+    public List<ReadContributionByCoordinatorIdDTO> getContributionByCoordinatorId(@PathVariable Long id) {
+        return contributionService.findByCoordinatorId(id);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteContribution(@PathVariable Long id) {
+        contributionService.deleteContribution(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

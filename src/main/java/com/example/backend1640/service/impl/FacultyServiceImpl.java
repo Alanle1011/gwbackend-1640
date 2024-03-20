@@ -32,12 +32,12 @@ public class FacultyServiceImpl implements FacultyService {
         validateFacultyExists(facultyDTO.getFacultyName());
         Faculty faculty = new Faculty();
 
-        User managerId = validateUserExists(facultyDTO.getManagerId());
+        User coordinatorId = validateUserExists(facultyDTO.getCoordinatorId());
 
         BeanUtils.copyProperties(facultyDTO, faculty);
         faculty.setCreatedAt(new Date());
         faculty.setUpdatedAt(new Date());
-        faculty.setManagerId(managerId);
+        faculty.setCoordinatorId(coordinatorId);
 
         //Save Faculty
         Faculty savedFaculty = facultyRepository.save(faculty);

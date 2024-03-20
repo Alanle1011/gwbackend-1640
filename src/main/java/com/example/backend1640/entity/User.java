@@ -34,7 +34,7 @@ public class User {
     @Convert(converter= UserRoleConverter.class)
     private UserRoleEnum userRole;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "FACULTY_ID", referencedColumnName = "id")
     private Faculty facultyId;
 
