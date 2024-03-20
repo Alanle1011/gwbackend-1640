@@ -135,6 +135,14 @@ public class UserServiceImpl implements UserService {
         return responseUserDTO;
     }
 
+    @Override
+    public void deleteUser(long id) {
+        User user = validateUserExists(id);
+        List<Contribution> contributions = contributionRepository.findByUploadedUserId(user);
+        contributionRepository.deleteAll(contributions);
+        userRepository.delete(user);
+    }
+
     private Faculty validateFacultyExists(Long id) {
         Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
 
