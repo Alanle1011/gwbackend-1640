@@ -135,6 +135,18 @@ public class UserServiceImpl implements UserService {
         return responseUserDTO;
     }
 
+    @Override
+    public void deleteUser(Long id) {
+        User user = validateUserExists(id);
+
+        if (user.getUserRole() == UserRoleEnum.STUDENT) {
+            List<Contribution> contributions = contributionRepository.findByUploadedUserId(user);
+            contributionRepository.deleteAll(contributions);
+        }
+
+        userRepository.deleteById(id);
+    }
+
     private Faculty validateFacultyExists(Long id) {
         Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
 
