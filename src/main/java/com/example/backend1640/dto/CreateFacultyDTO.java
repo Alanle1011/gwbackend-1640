@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class CreateFacultyDTO {
     private String facultyName;
-    private Long managerId;
+    private Long coordinatorId;
 }

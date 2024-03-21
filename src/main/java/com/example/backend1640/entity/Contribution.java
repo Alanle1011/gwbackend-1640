@@ -20,11 +20,11 @@ public class Contribution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "UPLOADED_USER_ID", referencedColumnName = "id")
     private User uploadedUserId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "APPROVED_COORDINATOR_ID", referencedColumnName = "id")
     private User approvedCoordinatorId;
 

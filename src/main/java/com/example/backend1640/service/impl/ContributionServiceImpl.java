@@ -4,8 +4,10 @@ import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.ContributionDTO;
 import com.example.backend1640.dto.CreateContributionDTO;
+import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
 import com.example.backend1640.dto.ReadContributionDTO;
 import com.example.backend1640.entity.*;
+import com.example.backend1640.exception.ContributionNotExistsException;
 import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
 import com.example.backend1640.exception.UploaderNotStudentException;
 import com.example.backend1640.exception.UserNotExistsException;
@@ -47,7 +49,7 @@ public class ContributionServiceImpl implements ContributionService {
         }
 
         //Get the coordinator manage this contribution
-        User coordinator = validateUserNotExists(uploader.getFacultyId().getManagerId().getId());
+        User coordinator = validateUserNotExists(uploader.getFacultyId().getCoordinatorId().getId());
 
         SubmissionPeriod submissionPeriod = validateSubmissionPeriodNotExists(contributionDTO.getSubmissionPeriodId());
 
@@ -88,6 +90,40 @@ public class ContributionServiceImpl implements ContributionService {
         }
 
         return readContributionDTOS;
+    }
+
+    @Override
+    public List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id) {
+        User coordinator = validateUserNotExists(id);
+        List<Contribution> contributions = contributionRepository.findByApprovedCoordinatorId(coordinator);
+        List<ReadContributionByCoordinatorIdDTO> readContributionByCoordinatorIdDTOS = new ArrayList<>();
+
+        for (Contribution contribution : contributions) {
+            ReadContributionByCoordinatorIdDTO readContributionByCoordinatorIdDTO = new ReadContributionByCoordinatorIdDTO();
+            readContributionByCoordinatorIdDTO.setApprovedCoordinatorId(contribution.getId());
+            readContributionByCoordinatorIdDTO.setTitle(contribution.getTitle());
+            readContributionByCoordinatorIdDTO.setContent(contribution.getContent());
+            readContributionByCoordinatorIdDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+            readContributionByCoordinatorIdDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+
+            readContributionByCoordinatorIdDTOS.add(readContributionByCoordinatorIdDTO);
+        }
+
+        return readContributionByCoordinatorIdDTOS;
+    }
+
+    @Override
+    public void deleteContribution(Long id) {
+        Contribution contribution = validateContributionNotExists(id);
+        contributionRepository.delete(contribution);
+    }
+
+    private Contribution validateContributionNotExists(Long id) {
+        Optional<Contribution> contributionOptional = contributionRepository.findById(id);
+        if (contributionOptional.isEmpty()) {
+            throw new ContributionNotExistsException("Contribution Not Exists");
+        }
+        return contributionOptional.get();
     }
 
     private SubmissionPeriod validateSubmissionPeriodNotExists(Long submissionPeriodId) {

@@ -22,9 +22,9 @@ public class Faculty {
     @Column(name = "FACULTY_NAME", nullable = false)
     private String facultyName;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "MANAGER_ID", referencedColumnName = "id")
-    private User managerId;
+    @ManyToOne
+    @JoinColumn(name = "COORDINATOR_ID", referencedColumnName = "id")
+    private User coordinatorId;
 
     @Column(name = "CREATED_AT", nullable = false)
     private Date createdAt;

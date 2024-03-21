@@ -11,5 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ContributionRepository extends JpaRepository<Contribution , Long> {
     Optional<Contribution> findById(Long id);
-    List<Contribution> findByUploadedUserId(User uploadedUserId);
+
+    List<Contribution> findByUploadedUserId(User user);
+
+    List<Contribution> findByApprovedCoordinatorId(User coordinator);
 }
