@@ -2,18 +2,24 @@ package com.example.backend1640.service.impl;
 
 import com.example.backend1640.dto.CreateFacultyDTO;
 import com.example.backend1640.dto.FacultyDTO;
+import com.example.backend1640.dto.ReadFacultyDTO;
+import com.example.backend1640.dto.UpdateFacultyDTO;
 import com.example.backend1640.entity.Faculty;
 import com.example.backend1640.entity.User;
 import com.example.backend1640.exception.FacultyAlreadyExistsException;
+import com.example.backend1640.exception.FacultyNotExistsException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
 import com.example.backend1640.exception.UserNotExistsException;
 import com.example.backend1640.repository.FacultyRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.FacultyService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,6 +53,48 @@ public class FacultyServiceImpl implements FacultyService {
         return responseFacultyDTO;
     }
 
+    @Override
+    public List<ReadFacultyDTO> findAll() {
+        List<Faculty> faculties = facultyRepository.findAll();
+        List<ReadFacultyDTO> readFacultyDTOs = new ArrayList<>();
+
+        for (Faculty faculty : faculties) {
+            ReadFacultyDTO readFacultyDTO = new ReadFacultyDTO();
+            BeanUtils.copyProperties(faculty, readFacultyDTO);
+
+            readFacultyDTO.setCoordinatorId(faculty.getCoordinatorId().getId().toString() + " - " + faculty.getCoordinatorId().getName());
+            readFacultyDTOs.add(readFacultyDTO);
+        }
+        return readFacultyDTOs;
+    }
+
+    @Override
+    public FacultyDTO updateFaculty(UpdateFacultyDTO facultyDTO) {
+        Faculty faculty = validateFacultyExists(facultyDTO.getId());
+
+        if (facultyDTO.getCoordinatorId() != null) {
+            User coordinatorId = validateUserExists(facultyDTO.getCoordinatorId());
+            faculty.setCoordinatorId(coordinatorId);
+        }
+        if (facultyDTO.getFacultyName() != null){
+            faculty.setFacultyName(facultyDTO.getFacultyName());
+        }
+        faculty.setUpdatedAt(new Date());
+
+        Faculty savedFaculty = facultyRepository.save(faculty);
+        FacultyDTO responseFacultyDTO = new FacultyDTO();
+        BeanUtils.copyProperties(savedFaculty, responseFacultyDTO);
+        responseFacultyDTO.setCoordinatorId(savedFaculty.getCoordinatorId().getId());
+
+        return responseFacultyDTO;
+    }
+
+    @Override
+    public void deleteFaculty(long id) {
+        Faculty faculty = validateFacultyExists(id);
+        facultyRepository.delete(faculty);
+    }
+
     private void validateFacultyExists(String facultyName) {
         Optional<Faculty> optionalFaculty = facultyRepository.findByFacultyName(facultyName);
 
@@ -62,5 +110,14 @@ public class FacultyServiceImpl implements FacultyService {
             throw new UserNotExistsException("UserNotExists");
         }
         return optionalUser.get();
+    }
+
+    private Faculty validateFacultyExists(Long id) {
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(id);
+
+        if (optionalFaculty.isEmpty()) {
+            throw new FacultyNotExistsException("Faculty does not exist");
+        }
+        return optionalFaculty.get();
     }
 }
