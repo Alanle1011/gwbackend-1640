@@ -3,6 +3,7 @@ package com.example.backend1640.controller;
 import com.example.backend1640.dto.CreateSubmissionPeriodDTO;
 import com.example.backend1640.dto.ReadSubmissionPeriodDTO;
 import com.example.backend1640.dto.SubmissionPeriodDTO;
+import com.example.backend1640.dto.UpdateSubmissionPeriodDTO;
 import com.example.backend1640.service.SubmissionPeriodService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,12 @@ public class SubmissionPeriodController {
     @GetMapping
     public List<ReadSubmissionPeriodDTO> getSubmissionPeriod() {
         return submissionPeriodService.findAll();
+    }
+
+    @PutMapping("/update/{id}")
+    public SubmissionPeriodDTO updateSubmissionPeriod(@PathVariable Long id, @Validated @RequestBody UpdateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException {
+        submissionPeriodDTO.setId(id);
+        return submissionPeriodService.updateSubmissionPeriod(submissionPeriodDTO);
     }
 
     @DeleteMapping

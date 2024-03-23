@@ -3,6 +3,7 @@ package com.example.backend1640.service.impl;
 import com.example.backend1640.dto.CreateSubmissionPeriodDTO;
 import com.example.backend1640.dto.ReadSubmissionPeriodDTO;
 import com.example.backend1640.dto.SubmissionPeriodDTO;
+import com.example.backend1640.dto.UpdateSubmissionPeriodDTO;
 import com.example.backend1640.entity.SubmissionPeriod;
 import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
@@ -70,6 +71,30 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
     public void deleteSubmissionPeriod(Long id) {
         SubmissionPeriod submissionPeriod = validateSubmissionPeriodExists(id);
         submissionPeriodRepository.delete(submissionPeriod);
+    }
+
+    @Override
+    public SubmissionPeriodDTO updateSubmissionPeriod(UpdateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException {
+        SubmissionPeriod submissionPeriod = validateSubmissionPeriodExists(submissionPeriodDTO.getId());
+
+        if (submissionPeriodDTO.getName() != null)
+            submissionPeriod.setName(submissionPeriodDTO.getName());
+        if (submissionPeriodDTO.getStartDate() != null) {
+            submissionPeriod.setStartDate(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(submissionPeriodDTO.getStartDate()));
+        }
+        if (submissionPeriodDTO.getClosureDate() != null) {
+            submissionPeriod.setClosureDate(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(submissionPeriodDTO.getClosureDate()));
+        }
+        if (submissionPeriodDTO.getFinalClosureDate() != null) {
+            submissionPeriod.setFinalClosureDate(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(submissionPeriodDTO.getFinalClosureDate()));
+        }
+        submissionPeriod.setUpdatedAt(new Date());
+
+        SubmissionPeriod savedSubmissionPeriod = submissionPeriodRepository.save(submissionPeriod);
+        SubmissionPeriodDTO responseSubmissionPeriodDTO = new SubmissionPeriodDTO();
+        BeanUtils.copyProperties(savedSubmissionPeriod, responseSubmissionPeriodDTO);
+
+        return responseSubmissionPeriodDTO;
     }
 
     private SubmissionPeriod validateSubmissionPeriodExists(Long id) {
