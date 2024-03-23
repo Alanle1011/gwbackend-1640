@@ -15,4 +15,6 @@ public interface SubmissionPeriodService {
     SubmissionPeriodDTO createSubmissionPeriod(CreateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException;
 
     List<ReadSubmissionPeriodDTO> findAll();
+
+    void deleteSubmissionPeriod(Long id);
 }

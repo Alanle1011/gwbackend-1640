@@ -29,4 +29,9 @@ public class SubmissionPeriodController {
     public List<ReadSubmissionPeriodDTO> getSubmissionPeriod() {
         return submissionPeriodService.findAll();
     }
+
+    @DeleteMapping
+    public void deleteSubmissionPeriod(@RequestParam Long id) {
+        submissionPeriodService.deleteSubmissionPeriod(id);
+    }
 }

@@ -4,6 +4,7 @@ import com.example.backend1640.dto.CreateSubmissionPeriodDTO;
 import com.example.backend1640.dto.ReadSubmissionPeriodDTO;
 import com.example.backend1640.dto.SubmissionPeriodDTO;
 import com.example.backend1640.entity.SubmissionPeriod;
+import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
 import com.example.backend1640.repository.SubmissionPeriodRepository;
 import com.example.backend1640.service.SubmissionPeriodService;
@@ -63,6 +64,22 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         }
 
         return readSubmissionPeriodDTOs;
+    }
+
+    @Override
+    public void deleteSubmissionPeriod(Long id) {
+        SubmissionPeriod submissionPeriod = validateSubmissionPeriodExists(id);
+        submissionPeriodRepository.delete(submissionPeriod);
+    }
+
+    private SubmissionPeriod validateSubmissionPeriodExists(Long id) {
+        Optional<SubmissionPeriod> optionalSubmissionPeriod = submissionPeriodRepository.findById(id);
+
+        if (optionalSubmissionPeriod.isEmpty()) {
+            throw new SubmissionPeriodNotExistsException("Submission Period Not Found");
+        }
+
+        return optionalSubmissionPeriod.get();
     }
 
     private void validateSubmissionPeriodExists(String name) {
