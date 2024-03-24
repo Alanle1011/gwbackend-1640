@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FacultyDTO {
+public class UpdateFacultyDTO {
+    private Long id;
     private String facultyName;
     private Long coordinatorId;
 }
