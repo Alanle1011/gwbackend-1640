@@ -46,7 +46,7 @@ public class ImageServiceImpl implements ImageService {
         if (validateImageIsValid(image)) {
             imageRepository.save(image);
         } else
-            throw new ImageFormatNotValidException("ImageFormatNotValid");
+            throw new ImageFormatNotValidException("Image Format Not Valid");
     }
 
     @Override

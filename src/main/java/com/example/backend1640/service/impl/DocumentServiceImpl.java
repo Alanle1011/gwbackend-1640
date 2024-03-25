@@ -45,7 +45,7 @@ public class DocumentServiceImpl implements DocumentService {
         if (validateDocumentIsPDF(document)) {
             documentRepository.save(document);
         } else
-            throw new DocumentNotPDFException("DocumentIsNotPDF");
+            throw new DocumentNotPDFException("Document Format Not Valid");
     }
 
     @Override
@@ -68,6 +68,6 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private boolean validateDocumentIsPDF(Document document) {
-        return document.getType().equals("application/pdf");
+        return document.getType().equals("application/pdf") || document.getType().equals("application/docx") || document.getType().equals("application/doc");
     }
 }

@@ -50,6 +50,8 @@ public class FacultyServiceImpl implements FacultyService {
         FacultyDTO responseFacultyDTO = new FacultyDTO();
         BeanUtils.copyProperties(savedFaculty, responseFacultyDTO);
 
+        responseFacultyDTO.setCoordinatorId(savedFaculty.getCoordinatorId().getId());
+
         return responseFacultyDTO;
     }
 
