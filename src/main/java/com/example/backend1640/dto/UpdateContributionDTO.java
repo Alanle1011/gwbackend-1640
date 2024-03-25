@@ -5,11 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReadContributionDTO {
+public class UpdateContributionDTO {
+    private Long id;
+    private Long uploadedUserId;
     private String title;
     private String content;
-    private Long uploadedUserId;
-    private Long submissionPeriodId;
     private Long imageId;
     private Long documentId;
+    private Long submissionPeriodId;
 }

@@ -39,6 +39,13 @@ public class DocumentController {
         return "redirect:/";
     }
 
+    @PutMapping
+    public void updateDocument(@RequestParam("documents") MultipartFile[] files, @RequestParam(value="documentId", required=true) String documentId) throws IOException {
+        for (MultipartFile file : files) {
+            documentService.updateDocument(file, documentId);
+        }
+    }
+
     @GetMapping("/download/{id}")
     public ResponseEntity<ByteArrayResource> downloadDocument(@PathVariable long id){
         Document document = documentService.getDocument(id).get();

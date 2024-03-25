@@ -11,4 +11,6 @@ public class ReadContributionByCoordinatorIdDTO {
     private String content;
     private Long uploadedUserId;
     private String submissionPeriod;
+    private Long imageId;
+    private Long documentId;
 }

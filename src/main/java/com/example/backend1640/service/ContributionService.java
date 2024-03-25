@@ -1,9 +1,6 @@
 package com.example.backend1640.service;
 
-import com.example.backend1640.dto.ContributionDTO;
-import com.example.backend1640.dto.CreateContributionDTO;
-import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
-import com.example.backend1640.dto.ReadContributionDTO;
+import com.example.backend1640.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,4 +14,6 @@ public interface ContributionService {
     List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id);
 
     void deleteContribution(Long id);
+
+    ContributionDTO updateContribution(UpdateContributionDTO contributionDTO);
 }

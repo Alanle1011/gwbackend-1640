@@ -1,9 +1,6 @@
 package com.example.backend1640.controller;
 
-import com.example.backend1640.dto.ContributionDTO;
-import com.example.backend1640.dto.CreateContributionDTO;
-import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
-import com.example.backend1640.dto.ReadContributionDTO;
+import com.example.backend1640.dto.*;
 import com.example.backend1640.service.ContributionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +31,12 @@ public class ContributionController {
     @GetMapping("coordinator/{id}")
     public List<ReadContributionByCoordinatorIdDTO> getContributionByCoordinatorId(@PathVariable Long id) {
         return contributionService.findByCoordinatorId(id);
+    }
+
+    @PutMapping("update/{id}")
+    public ContributionDTO updateContribution(@PathVariable Long id, @RequestBody UpdateContributionDTO contributionDTO) {
+        contributionDTO.setId(id);
+        return contributionService.updateContribution(contributionDTO);
     }
 
     @DeleteMapping("/delete/{id}")

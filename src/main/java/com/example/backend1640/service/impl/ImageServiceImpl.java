@@ -4,6 +4,7 @@ import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Image;
 import com.example.backend1640.exception.ContributionNotExistsException;
 import com.example.backend1640.exception.ImageFormatNotValidException;
+import com.example.backend1640.exception.ImageNotExistsException;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.ImageRepository;
 import com.example.backend1640.service.ImageService;
@@ -59,6 +60,25 @@ public class ImageServiceImpl implements ImageService {
         return imageRepository.findAll();
     }
 
+    @Override
+    public void updateImage(MultipartFile file, String imageId) {
+        Image image = validateImageExists(Long.valueOf(imageId));
+
+        image.setName(file.getOriginalFilename());
+        image.setType(file.getContentType());
+        try {
+            image.setData(file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        image.setUpdatedAt(new Date());
+
+        if (validateImageIsValid(image)) {
+            imageRepository.save(image);
+        } else
+            throw new ImageFormatNotValidException("Image Format Not Valid");
+    }
+
     private Contribution validateContributionExists(Long contributionId) {
         Optional<Contribution> optionalContribution = contributionRepository.findById(contributionId);
 
@@ -66,6 +86,15 @@ public class ImageServiceImpl implements ImageService {
             throw new ContributionNotExistsException("ContributionNotExists");
         }
         return optionalContribution.get();
+    }
+
+    private Image validateImageExists(Long id) {
+        Optional<Image> optionalImage = imageRepository.findById(id);
+
+        if (optionalImage.isEmpty()) {
+            throw new ImageNotExistsException("Image does not exist");
+        }
+        return optionalImage.get();
     }
 
     private boolean validateImageIsValid(Image image) {

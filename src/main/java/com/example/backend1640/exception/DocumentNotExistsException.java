@@ -2,8 +2,8 @@ package com.example.backend1640.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class DocumentNotPDFException extends LocalizedException {
-    public DocumentNotPDFException(String message) {
+public class DocumentNotExistsException extends LocalizedException {
+    public DocumentNotExistsException(String message) {
         super(message);
     }
 

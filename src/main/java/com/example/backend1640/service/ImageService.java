@@ -12,4 +12,6 @@ public interface ImageService {
     void saveImage(MultipartFile file, String contributionId) throws IOException;
     Optional<Image> getImage(Long id);
     List<Image> getAllImages();
+
+    void updateImage(MultipartFile file, String imageId);
 }

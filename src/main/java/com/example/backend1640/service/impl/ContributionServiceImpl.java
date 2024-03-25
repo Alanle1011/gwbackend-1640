@@ -2,10 +2,7 @@ package com.example.backend1640.service.impl;
 
 import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.constants.UserRoleEnum;
-import com.example.backend1640.dto.ContributionDTO;
-import com.example.backend1640.dto.CreateContributionDTO;
-import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
-import com.example.backend1640.dto.ReadContributionDTO;
+import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.*;
 import com.example.backend1640.exception.ContributionNotExistsException;
 import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
@@ -19,6 +16,7 @@ import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.ContributionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,16 +27,16 @@ import java.util.Optional;
 public class ContributionServiceImpl implements ContributionService {
     private final ContributionRepository contributionRepository;
     private final UserRepository userRepository;
+    private final SubmissionPeriodRepository submissionPeriodRepository;
     private final ImageRepository imageRepository;
     private final DocumentRepository documentRepository;
-    private final SubmissionPeriodRepository submissionPeriodRepository;
 
-    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository) {
+    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, ImageRepository imageRepository1, DocumentRepository documentRepository1) {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
-        this.imageRepository = imageRepository;
-        this.documentRepository = documentRepository;
         this.submissionPeriodRepository = submissionPeriodRepository;
+        this.imageRepository = imageRepository1;
+        this.documentRepository = documentRepository1;
     }
 
     @Override
@@ -75,16 +73,25 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    @Transactional
     public List<ReadContributionDTO> findAll() {
         List<Contribution> contributions = contributionRepository.findAll();
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
 
         for (Contribution contribution : contributions) {
+            Image image = imageRepository.findByContributionId(contribution);
+            Document document = documentRepository.findByContributionId(contribution);
             ReadContributionDTO readContributionDTO = new ReadContributionDTO();
             readContributionDTO.setTitle(contribution.getTitle());
             readContributionDTO.setContent(contribution.getContent());
             readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
             readContributionDTO.setSubmissionPeriodId(contribution.getSubmissionPeriodId().getId());
+            if (image != null) {
+                readContributionDTO.setImageId(image.getId());
+            }
+            if (document != null) {
+                readContributionDTO.setDocumentId(document.getId());
+            }
 
             readContributionDTOS.add(readContributionDTO);
         }
@@ -93,18 +100,27 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    @Transactional
     public List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id) {
         User coordinator = validateUserNotExists(id);
         List<Contribution> contributions = contributionRepository.findByApprovedCoordinatorId(coordinator);
         List<ReadContributionByCoordinatorIdDTO> readContributionByCoordinatorIdDTOS = new ArrayList<>();
 
         for (Contribution contribution : contributions) {
+            Image image = imageRepository.findByContributionId(contribution);
+            Document document = documentRepository.findByContributionId(contribution);
             ReadContributionByCoordinatorIdDTO readContributionByCoordinatorIdDTO = new ReadContributionByCoordinatorIdDTO();
-            readContributionByCoordinatorIdDTO.setApprovedCoordinatorId(contribution.getId());
+            readContributionByCoordinatorIdDTO.setApprovedCoordinatorId(coordinator.getId());
             readContributionByCoordinatorIdDTO.setTitle(contribution.getTitle());
             readContributionByCoordinatorIdDTO.setContent(contribution.getContent());
             readContributionByCoordinatorIdDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
             readContributionByCoordinatorIdDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+            if (image != null) {
+                readContributionByCoordinatorIdDTO.setImageId(image.getId());
+            }
+            if (document != null) {
+                readContributionByCoordinatorIdDTO.setDocumentId(document.getId());
+            }
 
             readContributionByCoordinatorIdDTOS.add(readContributionByCoordinatorIdDTO);
         }
@@ -118,6 +134,26 @@ public class ContributionServiceImpl implements ContributionService {
         contributionRepository.delete(contribution);
     }
 
+    @Override
+    public ContributionDTO updateContribution(UpdateContributionDTO contributionDTO) {
+        Contribution contribution = validateContributionNotExists(contributionDTO.getId());
+
+        if (contributionDTO.getTitle() != null)
+            contribution.setTitle(contributionDTO.getTitle());
+        if (contributionDTO.getContent() != null)
+            contribution.setContent(contributionDTO.getContent());
+
+        contribution.setUpdatedAt(new Date());
+
+        Contribution savedContribution = contributionRepository.save(contribution);
+        ContributionDTO responseContributionDTO = new ContributionDTO();
+        BeanUtils.copyProperties(savedContribution, responseContributionDTO);
+        responseContributionDTO.setUploadedUserId(savedContribution.getUploadedUserId().getId());
+        responseContributionDTO.setId(savedContribution.getId());
+
+        return responseContributionDTO;
+    }
+
     private Contribution validateContributionNotExists(Long id) {
         Optional<Contribution> contributionOptional = contributionRepository.findById(id);
         if (contributionOptional.isEmpty()) {
@@ -129,7 +165,7 @@ public class ContributionServiceImpl implements ContributionService {
     private SubmissionPeriod validateSubmissionPeriodNotExists(Long submissionPeriodId) {
         Optional<SubmissionPeriod> submissionPeriodOptional= submissionPeriodRepository.findById(submissionPeriodId);
         if (submissionPeriodOptional.isEmpty()) {
-            throw new SubmissionPeriodNotExistsException(" Submission Period Not Exists");
+            throw new SubmissionPeriodNotExistsException("Submission Period Not Exists");
         }
         return submissionPeriodOptional.get();
     }
