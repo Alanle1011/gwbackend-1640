@@ -11,6 +11,31 @@ spring:
   jackson:
     date-format: dd/MM/yyyy HH:mm
     time-zone: GMT+7
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: phongpnggcc200002@fpt.edu.vn
+    password: obik pipt gagr fkyk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+rabbitmq:
+  queue:
+    name: queue_1640
+  exchange:
+    name: exchange_1640
+  routing:
+    key: rounting_key_1640
 
 management:
   server:
