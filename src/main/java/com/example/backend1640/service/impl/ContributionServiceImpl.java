@@ -4,10 +4,7 @@ import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.*;
-import com.example.backend1640.exception.ContributionNotExistsException;
-import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
-import com.example.backend1640.exception.UploaderNotStudentException;
-import com.example.backend1640.exception.UserNotExistsException;
+import com.example.backend1640.exception.*;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.DocumentRepository;
 import com.example.backend1640.repository.ImageRepository;
@@ -31,12 +28,12 @@ public class ContributionServiceImpl implements ContributionService {
     private final ImageRepository imageRepository;
     private final DocumentRepository documentRepository;
 
-    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, ImageRepository imageRepository1, DocumentRepository documentRepository1) {
+    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository) {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
         this.submissionPeriodRepository = submissionPeriodRepository;
-        this.imageRepository = imageRepository1;
-        this.documentRepository = documentRepository1;
+        this.imageRepository = imageRepository;
+        this.documentRepository = documentRepository;
     }
 
     @Override
@@ -49,7 +46,23 @@ public class ContributionServiceImpl implements ContributionService {
         //Get the coordinator manage this contribution
         User coordinator = validateUserNotExists(uploader.getFacultyId().getCoordinatorId().getId());
 
-        SubmissionPeriod submissionPeriod = validateSubmissionPeriodNotExists(contributionDTO.getSubmissionPeriodId());
+        List<SubmissionPeriod> submissionPeriods = submissionPeriodRepository.findAll();
+
+        Date today = new Date();
+        SubmissionPeriod validSubmissionPeriod = null;
+
+        for (SubmissionPeriod submissionPeriod : submissionPeriods) {
+            if (today.after(submissionPeriod.getStartDate()) && today.before(submissionPeriod.getClosureDate())) {
+                validSubmissionPeriod = submissionPeriod;
+                break;
+            } else if (today.after(submissionPeriod.getClosureDate())) {
+                throw new SubmissionPeriodEndedException("Submission Period Ended");
+            }
+        }
+
+        if (validSubmissionPeriod == null) {
+            throw new SubmissionPeriodNotExistsException("Submission Period Not Exists");
+        }
 
         Contribution contribution = new Contribution();
         BeanUtils.copyProperties(contributionDTO, contribution);
@@ -58,7 +71,7 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setStatus(StatusEnum.OPEN);
         contribution.setUploadedUserId(uploader);
         contribution.setApprovedCoordinatorId(coordinator);
-        contribution.setSubmissionPeriodId(submissionPeriod);
+        contribution.setSubmissionPeriodId(validSubmissionPeriod);
 
         //Save
         Contribution savedContribution = contributionRepository.save(contribution);
@@ -162,14 +175,6 @@ public class ContributionServiceImpl implements ContributionService {
         return contributionOptional.get();
     }
 
-    private SubmissionPeriod validateSubmissionPeriodNotExists(Long submissionPeriodId) {
-        Optional<SubmissionPeriod> submissionPeriodOptional= submissionPeriodRepository.findById(submissionPeriodId);
-        if (submissionPeriodOptional.isEmpty()) {
-            throw new SubmissionPeriodNotExistsException("Submission Period Not Exists");
-        }
-        return submissionPeriodOptional.get();
-    }
-
     private User validateUserNotExists(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
 
@@ -178,5 +183,4 @@ public class ContributionServiceImpl implements ContributionService {
         }
         return optionalUser.get();
     }
-
 }
