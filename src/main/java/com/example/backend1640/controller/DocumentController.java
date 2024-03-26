@@ -31,7 +31,7 @@ public class DocumentController {
     }
 
     @PostMapping
-    public String saveDocument(@RequestParam("documents") MultipartFile[] files, @RequestParam(value="contributionId", required=true) String contributionId) throws IOException {
+    public String saveDocument(@RequestParam("doc") MultipartFile[] files, @RequestParam(value="contributionId", required=true) String contributionId) throws IOException {
         for (MultipartFile file : files) {
             documentService.saveDocument(file, contributionId);
         }
@@ -40,7 +40,7 @@ public class DocumentController {
     }
 
     @PutMapping
-    public void updateDocument(@RequestParam("documents") MultipartFile[] files, @RequestParam(value="documentId", required=true) String documentId) throws IOException {
+    public void updateDocument(@RequestParam("doc") MultipartFile[] files, @RequestParam(value="documentId", required=true) String documentId) throws IOException {
         for (MultipartFile file : files) {
             documentService.updateDocument(file, documentId);
         }
