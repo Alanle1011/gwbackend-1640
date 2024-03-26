@@ -97,6 +97,6 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private boolean validateDocumentIsPDF(Document document) {
-        return document.getType().equals("application/pdf") || document.getType().equals("application/docx") || document.getType().equals("application/doc");
+        return document.getType().equals("application/pdf") || document.getType().equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || document.getType().equals("application/msword");
     }
 }
