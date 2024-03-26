@@ -82,10 +82,12 @@ public class UserServiceImpl implements UserService {
         }
 
         LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setMessage("Correct password");
         loginDTO.setStatus(true);
-        loginDTO.setRole(optionalUser.get().getUserRole());
         loginDTO.setUserId(optionalUser.get().getId());
+        loginDTO.setName(optionalUser.get().getName());
+        loginDTO.setFaculty(optionalUser.get().getFacultyId().getFacultyName());
+        loginDTO.setEmail(optionalUser.get().getEmail());
+        loginDTO.setRole(optionalUser.get().getUserRole());
 
         return loginDTO;
 
