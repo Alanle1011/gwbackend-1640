@@ -3,7 +3,8 @@ package com.example.backend1640.service.impl;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Document;
 import com.example.backend1640.exception.ContributionNotExistsException;
-import com.example.backend1640.exception.DocumentNotPDFException;
+import com.example.backend1640.exception.DocumentNotExistsException;
+import com.example.backend1640.exception.DocumentFormatNotValidException;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.DocumentRepository;
 import com.example.backend1640.service.DocumentService;
@@ -45,7 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
         if (validateDocumentIsPDF(document)) {
             documentRepository.save(document);
         } else
-            throw new DocumentNotPDFException("DocumentIsNotPDF");
+            throw new DocumentFormatNotValidException("Document Format Not Valid");
     }
 
     @Override
@@ -58,6 +59,25 @@ public class DocumentServiceImpl implements DocumentService {
         return documentRepository.findAll();
     }
 
+    @Override
+    public void updateDocument(MultipartFile file, String documentId) {
+        Document document = validateDocumentExists(Long.valueOf(documentId));
+
+        document.setName(file.getOriginalFilename());
+        document.setType(file.getContentType());
+        try {
+            document.setData(file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        document.setUpdatedAt(new Date());
+
+        if (validateDocumentIsPDF(document)) {
+            documentRepository.save(document);
+        } else
+            throw new DocumentFormatNotValidException("Document Format Not Valid");
+    }
+
     private Contribution validateContributionExists(Long contributionId) {
         Optional<Contribution> optionalContribution = contributionRepository.findById(contributionId);
 
@@ -67,7 +87,16 @@ public class DocumentServiceImpl implements DocumentService {
         return optionalContribution.get();
     }
 
+    private Document validateDocumentExists(Long id) {
+        Optional<Document> optionalDocument = documentRepository.findById(id);
+
+        if (optionalDocument.isEmpty()) {
+            throw new DocumentNotExistsException("Document Not Exists");
+        }
+        return optionalDocument.get();
+    }
+
     private boolean validateDocumentIsPDF(Document document) {
-        return document.getType().equals("application/pdf");
+        return document.getType().equals("application/pdf") || document.getType().equals("application/docx") || document.getType().equals("application/doc");
     }
 }

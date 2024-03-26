@@ -39,6 +39,13 @@ public class ImageController {
         return "redirect:/";
     }
 
+    @PutMapping()
+    public void updateImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value="imageId", required=true) String imageId) throws IOException {
+        for (MultipartFile file : files) {
+            imageService.updateImage(file, imageId);
+        }
+    }
+
     @GetMapping("/download/{id}")
     public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable long id){
         Image image = imageService.getImage(id).get();
