@@ -55,8 +55,6 @@ public class ContributionServiceImpl implements ContributionService {
             if (today.after(submissionPeriod.getStartDate()) && today.before(submissionPeriod.getClosureDate())) {
                 validSubmissionPeriod = submissionPeriod;
                 break;
-            } else if (today.after(submissionPeriod.getClosureDate())) {
-                throw new SubmissionPeriodEndedException("Submission Period Ended");
             }
         }
 
