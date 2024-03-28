@@ -13,6 +13,17 @@ services:
       - ./data/postgres:/var/lib/postgresql/data:z
     networks:
       - gwbackend-net
+  rabbitmq:
+    image: rabbitmq:3.10.5-management
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - gwbackend-net
 networks:
   gwbackend-net:
     driver: bridge

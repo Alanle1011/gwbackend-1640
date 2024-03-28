@@ -11,7 +11,9 @@ import com.example.backend1640.repository.ImageRepository;
 import com.example.backend1640.repository.SubmissionPeriodRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.ContributionService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +29,21 @@ public class ContributionServiceImpl implements ContributionService {
     private final SubmissionPeriodRepository submissionPeriodRepository;
     private final ImageRepository imageRepository;
     private final DocumentRepository documentRepository;
+    private final RabbitTemplate rabbitTemplate;
 
-    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository) {
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+
+    @Value("${rabbitmq.routing.contribution}")
+    private String contributionRountingKey;
+
+    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, RabbitTemplate rabbitTemplate) {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
         this.submissionPeriodRepository = submissionPeriodRepository;
         this.imageRepository = imageRepository;
         this.documentRepository = documentRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -73,6 +83,19 @@ public class ContributionServiceImpl implements ContributionService {
 
         //Save
         Contribution savedContribution = contributionRepository.save(contribution);
+
+        //Send Email
+        rabbitTemplate.convertAndSend(exchange,
+                contributionRountingKey,
+                EmailDetails.builder()
+                        .messageBody("Contribution created Successful with mail: " + uploader.getEmail() + "\n" +
+                                "Student Name: " + uploader.getName() + "\n" +
+                                "Title: " + savedContribution.getTitle() + "\n" +
+                                "Created at: " + savedContribution.getCreatedAt() + "\n"
+                        )
+                        .recipient(coordinator.getEmail())
+                        .subject("CONTRIBUTION CREATED SUCCESS")
+                        .build());
 
         //Convert back to ContributionDTO to return
         ContributionDTO returnedContribution = new ContributionDTO();
