@@ -9,8 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class LoginDTO {
-    private String message;
     private Boolean status;
     private Long userId;
+    private String name;
+    private String faculty;
+    private String email;
     private UserRoleEnum role;
 }
