@@ -17,18 +17,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.name}")
-    private String queue;
+    @Value("${rabbitmq.queue.contribution}")
+    private String contributionQueue;
+
+    @Value("${rabbitmq.queue.user}")
+    private String userQueue;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.key}")
-    private String rountingKey;
+    @Value("${rabbitmq.routing.contribution}")
+    private String contributionRountingKey;
+
+    @Value("${rabbitmq.routing.user}")
+    private String userRountingKey;
 
     @Bean
-    public Queue queue() {
-        return new Queue(queue);
+    public Queue contributionQueue() {
+        return new Queue(contributionQueue);
+    }
+
+    @Bean
+    public Queue userQueue() {
+        return new Queue(userQueue);
     }
 
     @Bean
@@ -37,8 +48,19 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding binding(){
-        return BindingBuilder.bind(queue()).to(exchange()).with(rountingKey);
+    public Binding contributionBinding(){
+        return BindingBuilder.bind(contributionQueue()).to(exchange()).with(contributionRountingKey);
+    }
+
+    @Bean
+    public Binding userBinding(){
+        return BindingBuilder.bind(userQueue()).to(exchange()).with(userRountingKey);
+    }
+
+
+    @Bean
+    MessageConverter converter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     @Bean
@@ -48,8 +70,4 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 
-    @Bean
-    MessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
-    }
 }

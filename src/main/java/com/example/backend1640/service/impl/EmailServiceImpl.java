@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailServiceImpl {
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String emailSender;
@@ -24,8 +24,23 @@ public class EmailServiceImpl {
 
     }
 
-    @RabbitListener(queues = "queue_1640")
-    public void sendEmail(EmailDetails emailDetails){
+    @RabbitListener(queues = "contribution_queue_1640")
+    public void sendContributionEmail(EmailDetails emailDetails){
+        try {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setFrom(emailSender);
+            mailMessage.setTo(emailDetails.getRecipient());
+            mailMessage.setText(emailDetails.getMessageBody());
+            mailMessage.setSubject(emailDetails.getSubject());
+            javaMailSender.send(mailMessage);
+            log.info("Mail sent successfully");
+        }catch (MailException e){
+            log.debug("Sending mail failed due to some error");
+        }
+    }
+
+    @RabbitListener(queues = "user_queue_1640")
+    public void sendUserEmail(EmailDetails emailDetails){
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(emailSender);

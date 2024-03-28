@@ -34,8 +34,8 @@ public class ContributionServiceImpl implements ContributionService {
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.key}")
-    private String rountingKey;
+    @Value("${rabbitmq.routing.contribution}")
+    private String contributionRountingKey;
 
     public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, RabbitTemplate rabbitTemplate) {
         this.contributionRepository = contributionRepository;
@@ -86,11 +86,15 @@ public class ContributionServiceImpl implements ContributionService {
 
         //Send Email
         rabbitTemplate.convertAndSend(exchange,
-                rountingKey,
+                contributionRountingKey,
                 EmailDetails.builder()
-                        .messageBody("Registration Successful with mail id: " + uploader.getEmail())
+                        .messageBody("Contribution created Successful with mail: " + uploader.getEmail() + "\n" +
+                                "Student Name: " + uploader.getName() + "\n" +
+                                "Title: " + savedContribution.getTitle() + "\n" +
+                                "Created at: " + savedContribution.getCreatedAt() + "\n"
+                        )
                         .recipient(coordinator.getEmail())
-                        .subject("REGISTRATION SUCCESS")
+                        .subject("CONTRIBUTION CREATED SUCCESS")
                         .build());
 
         //Convert back to ContributionDTO to return

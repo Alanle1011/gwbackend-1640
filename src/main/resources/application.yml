@@ -31,11 +31,14 @@ spring:
 
 rabbitmq:
   queue:
-    name: queue_1640
+    contribution: contribution_queue_1640
+    user: user_queue_1640
   exchange:
     name: exchange_1640
   routing:
-    key: rounting_key_1640
+    contribution: contribution_rounting_key_1640
+    user: user_routing_key_1640
+
 
 management:
   server:
