@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReadContributionDTO {
+    private Long id;
     private String title;
     private String content;
     private Long uploadedUserId;

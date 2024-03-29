@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReadContributionByCoordinatorIdDTO {
+    private Long id;
     private Long approvedCoordinatorId;
     private String title;
     private String content;

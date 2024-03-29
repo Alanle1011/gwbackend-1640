@@ -93,6 +93,7 @@ public class ContributionServiceImpl implements ContributionService {
             Image image = imageRepository.findByContributionId(contribution);
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionDTO readContributionDTO = new ReadContributionDTO();
+            readContributionDTO.setId(contribution.getId());
             readContributionDTO.setTitle(contribution.getTitle());
             readContributionDTO.setContent(contribution.getContent());
             readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
