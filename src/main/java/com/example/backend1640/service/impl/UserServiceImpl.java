@@ -1,7 +1,13 @@
 package com.example.backend1640.service.impl;
 
 import com.example.backend1640.constants.UserRoleEnum;
-import com.example.backend1640.dto.*;
+import com.example.backend1640.dto.CreateUserDTO;
+import com.example.backend1640.dto.EmailDetails;
+import com.example.backend1640.dto.LoginDTO;
+import com.example.backend1640.dto.LoginRequestDTO;
+import com.example.backend1640.dto.ReadUserDTO;
+import com.example.backend1640.dto.UpdateUserDTO;
+import com.example.backend1640.dto.UserDTO;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Faculty;
 import com.example.backend1640.entity.User;
@@ -13,7 +19,9 @@ import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.FacultyRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.UserService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +36,20 @@ public class UserServiceImpl implements UserService {
     private final FacultyRepository facultyRepository;
     private final ContributionRepository contributionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RabbitTemplate rabbitTemplate;
 
-    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, PasswordEncoder passwordEncoder) {
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+
+    @Value("${rabbitmq.routing.user}")
+    private String userRountingKey;
+
+    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
         this.facultyRepository = facultyRepository;
         this.contributionRepository = contributionRepository;
         this.passwordEncoder = passwordEncoder;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -60,6 +76,35 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(savedUser, responseUserDTO);
         if (savedUser.getUserRole() == UserRoleEnum.STUDENT) {
             responseUserDTO.setFaculty(savedUser.getFacultyId().getFacultyName());
+        }
+
+        //Send Email
+        if (savedUser.getUserRole() == UserRoleEnum.STUDENT) {
+
+            rabbitTemplate.convertAndSend(exchange,
+                    userRountingKey,
+                    EmailDetails.builder()
+                            .messageBody("Your account have been Successful CREATED with mail: " + savedUser.getEmail() + "\n" +
+                                    "Password: " + userDTO.getPassword() + "\n" +
+                                    "Name: " + userDTO.getName() + "\n" +
+                                    "Role: " + userDTO.getUserRole() + "\n" +
+                                    "Faculty: " + user.getFacultyId().getFacultyName() + "\n"
+                            )
+                            .recipient(user.getEmail())
+                            .subject("REGISTRATION SUCCESS")
+                            .build());
+        } else {
+            rabbitTemplate.convertAndSend(exchange,
+                    userRountingKey,
+                    EmailDetails.builder()
+                            .messageBody("Your account have been Successful CREATED with mail: " + savedUser.getEmail() + "\n" +
+                                    "Password: " + userDTO.getPassword() + "\n" +
+                                    "Name: " + userDTO.getName() + "\n" +
+                                    "Role: " + userDTO.getUserRole() + "\n"
+                            )
+                            .recipient(user.getEmail())
+                            .subject("USER REGISTRATION SUCCESS")
+                            .build());
         }
 
         return responseUserDTO;
