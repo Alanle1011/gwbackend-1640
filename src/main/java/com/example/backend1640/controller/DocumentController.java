@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,7 +63,7 @@ public class DocumentController {
                 .body(new ByteArrayResource(document.getData()));
     }
 
-    @GetMapping("download/coordinatorId/{id}")
+    @GetMapping("downloadByCoordinatorId/{id}")
     public ResponseEntity<byte[]> downloadDocumentAsZip(@PathVariable long id) {
         List<ReadContributionByCoordinatorIdDTO> contributions = contributionService.findByCoordinatorId(id);
         if (contributions.isEmpty()) {
@@ -92,6 +93,38 @@ public class DocumentController {
                     .header("Content-Disposition", "attachment; filename=\"documents.zip\"")
                     .body(outputStream.toByteArray());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("downloadSelectedDocuments")
+    public ResponseEntity<byte[]> downloadSelectedDocuments(@RequestParam List<Long> documentIds) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+
+            for (Long documentId : documentIds) {
+                Optional<Document> documentOptional = documentService.getDocument(documentId);
+                if (documentOptional.isPresent()) {
+                    Document document = documentOptional.get();
+                    byte[] documentData = document.getData();
+                    String documentName = document.getName();
+
+                    ZipEntry entry = new ZipEntry(documentName);
+                    zipOutputStream.putNextEntry(entry);
+                    zipOutputStream.write(documentData);
+                    zipOutputStream.closeEntry();
+                }
+            }
+
+            zipOutputStream.finish();
+            zipOutputStream.close();
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"selected_documents.zip\"")
+                    .body(outputStream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
