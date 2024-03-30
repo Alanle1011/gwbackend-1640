@@ -19,4 +19,5 @@ public class ContributionDTO {
     private Long documentId;
     private Date createdAt;
     private Date updatedAt;
+    private String submissionPeriod;
 }

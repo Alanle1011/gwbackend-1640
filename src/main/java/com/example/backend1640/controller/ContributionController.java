@@ -2,8 +2,6 @@ package com.example.backend1640.controller;
 
 import com.example.backend1640.dto.*;
 import com.example.backend1640.service.ContributionService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,8 +38,7 @@ public class ContributionController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteContribution(@PathVariable Long id) {
+    public void deleteContribution(@PathVariable Long id) {
         contributionService.deleteContribution(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
