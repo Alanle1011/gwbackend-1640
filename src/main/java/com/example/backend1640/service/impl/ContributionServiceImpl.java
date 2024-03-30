@@ -94,16 +94,19 @@ public class ContributionServiceImpl implements ContributionService {
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionDTO readContributionDTO = new ReadContributionDTO();
             readContributionDTO.setId(contribution.getId());
+            readContributionDTO.setApprovedCoordinator(contribution.getApprovedCoordinatorId().getName());
             readContributionDTO.setTitle(contribution.getTitle());
             readContributionDTO.setContent(contribution.getContent());
             readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
-            readContributionDTO.setSubmissionPeriodId(contribution.getSubmissionPeriodId().getId());
+            readContributionDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
+            readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
             if (image != null) {
                 readContributionDTO.setImageId(image.getId());
             }
             if (document != null) {
                 readContributionDTO.setDocumentId(document.getId());
             }
+            readContributionDTO.setCreatedAt(contribution.getCreatedAt());
 
             readContributionDTOS.add(readContributionDTO);
         }
@@ -122,10 +125,11 @@ public class ContributionServiceImpl implements ContributionService {
             Image image = imageRepository.findByContributionId(contribution);
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionByCoordinatorIdDTO readContributionByCoordinatorIdDTO = new ReadContributionByCoordinatorIdDTO();
-            readContributionByCoordinatorIdDTO.setApprovedCoordinatorId(coordinator.getId());
+            readContributionByCoordinatorIdDTO.setId(contribution.getId());
             readContributionByCoordinatorIdDTO.setTitle(contribution.getTitle());
             readContributionByCoordinatorIdDTO.setContent(contribution.getContent());
             readContributionByCoordinatorIdDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+            readContributionByCoordinatorIdDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
             readContributionByCoordinatorIdDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
             if (image != null) {
                 readContributionByCoordinatorIdDTO.setImageId(image.getId());
@@ -133,6 +137,7 @@ public class ContributionServiceImpl implements ContributionService {
             if (document != null) {
                 readContributionByCoordinatorIdDTO.setDocumentId(document.getId());
             }
+            readContributionByCoordinatorIdDTO.setCreatedAt(contribution.getCreatedAt());
 
             readContributionByCoordinatorIdDTOS.add(readContributionByCoordinatorIdDTO);
         }
