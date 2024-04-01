@@ -21,7 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Comparator;
 
 @Service
 public class ContributionServiceImpl implements ContributionService {
@@ -86,7 +90,16 @@ public class ContributionServiceImpl implements ContributionService {
         Contribution savedContribution = contributionRepository.save(contribution);
 
         //Send Email
-        rabbitTemplate.convertAndSend(exchange, contributionRountingKey, EmailDetails.builder().messageBody("Contribution created Successful with mail: " + uploader.getEmail() + "\n" + "Student Name: " + uploader.getName() + "\n" + "Title: " + savedContribution.getTitle() + "\n" + "Created at: " + savedContribution.getCreatedAt() + "\n").recipient(coordinator.getEmail()).subject("CONTRIBUTION CREATED SUCCESS").build());
+        rabbitTemplate.convertAndSend(exchange,
+                contributionRountingKey,
+                EmailDetails.builder().
+                        messageBody("Contribution created Successful with mail: " + uploader.getEmail() + "\n" +
+                                "Student Name: " + uploader.getName() + "\n" +
+                                "Title: " + savedContribution.getTitle() + "\n" +
+                                "Created at: " + savedContribution.getCreatedAt() + "\n")
+                        .recipient(coordinator.getEmail())
+                        .subject("CONTRIBUTION CREATED SUCCESS")
+                        .build());
 
         //Convert back to ContributionDTO to return
         ContributionDTO returnedContribution = new ContributionDTO();
