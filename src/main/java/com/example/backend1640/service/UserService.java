@@ -1,7 +1,11 @@
 package com.example.backend1640.service;
 
-import com.example.backend1640.dto.*;
-import com.example.backend1640.entity.User;
+import com.example.backend1640.dto.CreateUserDTO;
+import com.example.backend1640.dto.LoginDTO;
+import com.example.backend1640.dto.LoginRequestDTO;
+import com.example.backend1640.dto.ReadUserDTO;
+import com.example.backend1640.dto.UpdateUserDTO;
+import com.example.backend1640.dto.UserDTO;
 
 import java.util.List;
 
