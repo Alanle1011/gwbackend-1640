@@ -11,7 +11,10 @@ import java.util.Optional;
 public interface ImageService {
     void saveImage(MultipartFile file, String contributionId) throws IOException;
     Optional<Image> getImage(Long id);
+    Image getImageByUserId(Long id);
     List<Image> getAllImages();
 
     void updateImage(MultipartFile file, String imageId);
+
+    void saveUserImage(MultipartFile file, String userId);
 }
