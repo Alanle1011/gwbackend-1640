@@ -7,8 +7,9 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class ReadContributionByCoordinatorIdDTO {
+public class ReadContributionByStatusApprovedDTO {
     private Long id;
+    private String approvedCoordinator;
     private String title;
     private String content;
     private Long uploadedUserId;

@@ -24,14 +24,14 @@ public class ImageController {
     }
 
     @GetMapping
-    public String getAllImage(Model model){
+    public String getAllImage(Model model) {
         List<Image> images = imageService.getAllImages();
         model.addAttribute("images", images);
         return "image";
     }
 
     @PostMapping
-    public String saveImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value="contributionId", required=true) String contributionId) throws IOException {
+    public String saveImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value = "contributionId", required = true) String contributionId) throws IOException {
         for (MultipartFile file : files) {
             imageService.saveImage(file, contributionId);
         }
@@ -40,14 +40,14 @@ public class ImageController {
     }
 
     @PutMapping()
-    public void updateImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value="imageId", required=true) String imageId) throws IOException {
+    public void updateImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value = "imageId", required = true) String imageId) throws IOException {
         for (MultipartFile file : files) {
             imageService.updateImage(file, imageId);
         }
     }
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable long id){
+    public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable long id) {
         Image image = imageService.getImage(id).get();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getType()))

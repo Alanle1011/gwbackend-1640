@@ -2,6 +2,7 @@ package com.example.backend1640.controller;
 
 import com.example.backend1640.dto.*;
 import com.example.backend1640.service.ContributionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,10 +32,20 @@ public class ContributionController {
         return contributionService.findByCoordinatorId(id);
     }
 
+    @GetMapping("approved")
+    public List<ReadContributionByStatusApprovedDTO> getContributionByStatusApproved() {
+        return contributionService.findByStatusApproved("approved");
+    }
+
     @PutMapping("update/{id}")
     public ContributionDTO updateContribution(@PathVariable Long id, @RequestBody UpdateContributionDTO contributionDTO) {
         contributionDTO.setId(id);
         return contributionService.updateContribution(contributionDTO);
+    }
+
+    @PutMapping("setStatus/{id}")
+    public void setContributionStatus(@PathVariable Long id, @RequestBody String status) throws JsonProcessingException {
+        contributionService.setContributionStatus(id, status);
     }
 
     @DeleteMapping("/delete/{id}")

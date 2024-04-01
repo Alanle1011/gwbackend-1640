@@ -15,6 +15,8 @@ public class ReadContributionDTO {
     private Long uploadedUserId;
     private String uploadedUserName;
     private String submissionPeriod;
+    private String faculty;
+    private String status;
     private Long imageId;
     private Long documentId;
     private Date createdAt;

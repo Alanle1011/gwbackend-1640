@@ -1,5 +1,6 @@
 package com.example.backend1640.repository;
 
+import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface ContributionRepository extends JpaRepository<Contribution , Lon
     List<Contribution> findByUploadedUserId(User user);
 
     List<Contribution> findByApprovedCoordinatorId(User coordinator);
+
+    List<Contribution> findByStatus(StatusEnum statusEnum);
 }
