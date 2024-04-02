@@ -113,6 +113,33 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     @Transactional
+    public ReadContributionDTO findOne(Long id) {
+        Contribution contribution = validateContributionNotExists(id);
+        ReadContributionDTO readContributionDTO = new ReadContributionDTO();
+
+        Image image = imageRepository.findByContributionId(contribution);
+        Document document = documentRepository.findByContributionId(contribution);
+        readContributionDTO.setId(contribution.getId());
+        readContributionDTO.setApprovedCoordinator(contribution.getApprovedCoordinatorId().getName());
+        readContributionDTO.setTitle(contribution.getTitle());
+        readContributionDTO.setContent(contribution.getContent());
+        readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+        readContributionDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
+        readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+        readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
+        readContributionDTO.setStatus(contribution.getStatus().toString());
+        if (image != null) {
+            readContributionDTO.setImageId(image.getId());
+        }
+        if (document != null) {
+            readContributionDTO.setDocumentId(document.getId());
+        }
+
+        return readContributionDTO;
+    }
+
+    @Override
+    @Transactional
     public List<ReadContributionDTO> findAll() {
         List<Contribution> contributions = contributionRepository.findAll();
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
