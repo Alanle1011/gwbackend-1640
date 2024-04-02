@@ -65,7 +65,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/download/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable long id) {
         Image image = imageService.getImage(id).get();
         return ResponseEntity.ok()
