@@ -22,6 +22,11 @@ public class ContributionController {
         return contributionService.createContribution(contributionDTO);
     }
 
+    @GetMapping("/{id}")
+    public ReadContributionDTO getContribution(@PathVariable Long id) {
+        return contributionService.findOne(id);
+    }
+
     @GetMapping
     public List<ReadContributionDTO> getAllContributions() {
         return contributionService.findAll();

@@ -9,9 +9,12 @@ import java.util.List;
 public interface ContributionService {
     ContributionDTO createContribution(CreateContributionDTO contributionDTO);
 
+    ReadContributionDTO findOne(Long id);
+
     List<ReadContributionDTO> findAll();
 
     List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id);
+
     List<ReadContributionByStatusApprovedDTO> findByStatusApproved(String status);
 
     void deleteContribution(Long id);
