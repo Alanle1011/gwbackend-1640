@@ -2,11 +2,12 @@ package com.example.backend1640.controller;
 
 import com.documents4j.api.DocumentType;
 import com.documents4j.api.IConverter;
-import com.documents4j.job.LocalConverter;
 import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
 import com.example.backend1640.entity.Document;
 import com.example.backend1640.service.ContributionService;
 import com.example.backend1640.service.DocumentService;
+import jakarta.annotation.PreDestroy;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,10 +35,12 @@ import java.util.zip.ZipOutputStream;
 public class DocumentController {
     private final DocumentService documentService;
     private final ContributionService contributionService;
+    private final IConverter localConverter;
 
-    public DocumentController(DocumentService documentService, ContributionService contributionService) {
+    public DocumentController(DocumentService documentService, ContributionService contributionService, IConverter localConverter) {
         this.documentService = documentService;
         this.contributionService = contributionService;
+        this.localConverter = localConverter;
     }
 
     @GetMapping
@@ -149,6 +152,14 @@ public class DocumentController {
 
         Document document = documentOptional.get();
 
+        // Check if the document is already a PDF
+        if (document.getType().equalsIgnoreCase("pdf")) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header("Content-Disposition", "inline; filename=\"" + document.getName() + "\"")
+                    .body(new ByteArrayResource(document.getData()));
+        }
+
         // Convert to PDF using local converter (com.documents4j)
         ByteArrayOutputStream pdfFile = convertToPDF(document);
 
@@ -164,14 +175,26 @@ public class DocumentController {
 
     private ByteArrayOutputStream convertToPDF(Document document) {
         try {
-            InputStream docxInputStream = new ByteArrayInputStream(document.getData());
-            ByteArrayOutputStream localOutputStream = new ByteArrayOutputStream();
-            IConverter localConverter = LocalConverter.builder().build();
-            localConverter.convert(docxInputStream).as(DocumentType.DOCX).to(localOutputStream).as(DocumentType.PDF).execute();
-            return localOutputStream;
+            InputStream inputStream = new ByteArrayInputStream(document.getData());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            if (document.getType().equalsIgnoreCase("docx")) {
+                localConverter.convert(inputStream).as(DocumentType.DOCX).to(outputStream).as(DocumentType.PDF).execute();
+            } else if (document.getType().equalsIgnoreCase("doc")) {
+                // Handle .doc files using Apache POI
+                XWPFDocument docxDocument = new XWPFDocument(inputStream);
+                docxDocument.write(outputStream);
+            }
+
+            return outputStream;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @PreDestroy
+    public void cleanupConverter() {
+        localConverter.shutDown();
     }
 }
