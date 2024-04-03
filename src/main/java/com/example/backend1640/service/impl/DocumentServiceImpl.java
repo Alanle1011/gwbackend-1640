@@ -9,6 +9,7 @@ import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.DocumentRepository;
 import com.example.backend1640.service.DocumentService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -43,18 +44,20 @@ public class DocumentServiceImpl implements DocumentService {
         document.setUpdatedAt(new Date());
         document.setContributionId(contribution);
 
-        if (validateDocumentIsPDF(document)) {
+        if (validateDocumentFormatIsValid(document)) {
             documentRepository.save(document);
         } else
             throw new DocumentFormatNotValidException("Document Format Not Valid");
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Document> getDocument(Long id) {
         return documentRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Document> getAllDocuments() {
         return documentRepository.findAll();
     }
@@ -72,7 +75,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
         document.setUpdatedAt(new Date());
 
-        if (validateDocumentIsPDF(document)) {
+        if (validateDocumentFormatIsValid(document)) {
             documentRepository.save(document);
         } else
             throw new DocumentFormatNotValidException("Document Format Not Valid");
@@ -96,7 +99,7 @@ public class DocumentServiceImpl implements DocumentService {
         return optionalDocument.get();
     }
 
-    private boolean validateDocumentIsPDF(Document document) {
-        return document.getType().equals("application/pdf") || document.getType().equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || document.getType().equals("application/msword");
+    private boolean validateDocumentFormatIsValid(Document document) {
+        return document.getType().equals("application/pdf") || document.getType().equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     }
 }
