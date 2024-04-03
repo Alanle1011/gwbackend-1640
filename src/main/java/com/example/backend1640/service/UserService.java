@@ -1,11 +1,6 @@
 package com.example.backend1640.service;
 
-import com.example.backend1640.dto.CreateUserDTO;
-import com.example.backend1640.dto.LoginDTO;
-import com.example.backend1640.dto.LoginRequestDTO;
-import com.example.backend1640.dto.ReadUserDTO;
-import com.example.backend1640.dto.UpdateUserDTO;
-import com.example.backend1640.dto.UserDTO;
+import com.example.backend1640.dto.*;
 
 import java.util.List;
 
@@ -17,6 +12,8 @@ public interface UserService {
     LoginDTO loginUser(LoginRequestDTO loginRequestDTO);
 
     List<ReadUserDTO> findAll();
+
+    ReadUserByIdDTO findById(long id);
 
     UserDTO updateUser(UpdateUserDTO userDTO);
 

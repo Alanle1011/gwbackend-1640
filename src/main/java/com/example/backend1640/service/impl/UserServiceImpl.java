@@ -1,13 +1,7 @@
 package com.example.backend1640.service.impl;
 
 import com.example.backend1640.constants.UserRoleEnum;
-import com.example.backend1640.dto.CreateUserDTO;
-import com.example.backend1640.dto.EmailDetails;
-import com.example.backend1640.dto.LoginDTO;
-import com.example.backend1640.dto.LoginRequestDTO;
-import com.example.backend1640.dto.ReadUserDTO;
-import com.example.backend1640.dto.UpdateUserDTO;
-import com.example.backend1640.dto.UserDTO;
+import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Faculty;
 import com.example.backend1640.entity.User;
@@ -154,6 +148,17 @@ public class UserServiceImpl implements UserService {
             readUserDTOS.add(readUserDTO);
         }
         return readUserDTOS;
+    }
+
+    @Override
+    public ReadUserByIdDTO findById(long id) {
+        User user = validateUserExists(id);
+        ReadUserByIdDTO readUserByIdDTO = new ReadUserByIdDTO();
+        BeanUtils.copyProperties(user, readUserByIdDTO);
+        if (user.getUserRole() == UserRoleEnum.STUDENT) {
+            readUserByIdDTO.setFaculty(user.getFacultyId().getFacultyName());
+        }
+        return readUserByIdDTO;
     }
 
     @Override
