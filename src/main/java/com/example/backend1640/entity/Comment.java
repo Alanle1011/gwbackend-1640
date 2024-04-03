@@ -20,8 +20,8 @@ public class Comment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "COORDINATOR_ID", referencedColumnName = "id")
+    private User coordinator;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
