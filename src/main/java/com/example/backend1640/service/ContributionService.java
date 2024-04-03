@@ -15,6 +15,8 @@ public interface ContributionService {
 
     List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id);
 
+    List<ReadContributionByUserIdDTO> findByUserId(Long id);
+
     List<ReadContributionByStatusApprovedDTO> findByStatusApproved(String status);
 
     void deleteContribution(Long id);

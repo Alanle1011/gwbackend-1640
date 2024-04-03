@@ -37,6 +37,11 @@ public class ContributionController {
         return contributionService.findByCoordinatorId(id);
     }
 
+    @GetMapping("user/{id}")
+    public List<ReadContributionByUserIdDTO> getContributionByUserId(@PathVariable Long id) {
+        return contributionService.findByUserId(id);
+    }
+
     @GetMapping("approved")
     public List<ReadContributionByStatusApprovedDTO> getContributionByStatusApproved() {
         return contributionService.findByStatusApproved("approved");
