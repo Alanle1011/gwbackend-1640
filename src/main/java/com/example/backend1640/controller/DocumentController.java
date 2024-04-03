@@ -1,13 +1,9 @@
 package com.example.backend1640.controller;
 
-import com.documents4j.api.DocumentType;
-import com.documents4j.api.IConverter;
 import com.example.backend1640.dto.ReadContributionByCoordinatorIdDTO;
 import com.example.backend1640.entity.Document;
 import com.example.backend1640.service.ContributionService;
 import com.example.backend1640.service.DocumentService;
-import jakarta.annotation.PreDestroy;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,12 +31,10 @@ import java.util.zip.ZipOutputStream;
 public class DocumentController {
     private final DocumentService documentService;
     private final ContributionService contributionService;
-    private final IConverter localConverter;
 
-    public DocumentController(DocumentService documentService, ContributionService contributionService, IConverter localConverter) {
+    public DocumentController(DocumentService documentService, ContributionService contributionService) {
         this.documentService = documentService;
         this.contributionService = contributionService;
-        this.localConverter = localConverter;
     }
 
     @GetMapping
@@ -66,12 +60,17 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ByteArrayResource> downloadDocument(@PathVariable long id) {
-        Document document = documentService.getDocument(id).get();
+    @GetMapping("{id}")
+    public ResponseEntity<ByteArrayResource> getDocument(@PathVariable Long id) {
+        Optional<Document> documentOptional = documentService.getDocument(id);
+        if (documentOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Document document = documentOptional.get();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(document.getType()))
-                .header("Content-Disposition", "attachment: filename=\"" + document.getName() + "\"")
+                .header("Content-Disposition", "inline; filename=\"" + document.getName() + "\"")
                 .body(new ByteArrayResource(document.getData()));
     }
 
@@ -141,53 +140,5 @@ public class DocumentController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @GetMapping("pdf/{id}")
-    public ResponseEntity<ByteArrayResource> getDocumentAsPdfWithLocalConverter(@PathVariable long id) throws IOException {
-        Optional<Document> documentOptional = documentService.getDocument(id);
-        if (documentOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        Document document = documentOptional.get();
-
-        // Check if the document is already a PDF
-        if (document.getType().equalsIgnoreCase("application/pdf")) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .header("Content-Disposition", "inline; filename=\"" + document.getName() + "\"")
-                    .body(new ByteArrayResource(document.getData()));
-        }
-
-        // Convert to PDF using local converter (com.documents4j)
-        ByteArrayOutputStream pdfFile = convertToPDF(document);
-
-        if (pdfFile == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header("Content-Disposition", "inline; filename=\"" + document.getName() + ".pdf\"")
-                .body(new ByteArrayResource(pdfFile.toByteArray()));
-    }
-
-    private ByteArrayOutputStream convertToPDF(Document document) {
-        try {
-            InputStream inputStream = new ByteArrayInputStream(document.getData());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            localConverter.convert(inputStream).as(DocumentType.DOCX).to(outputStream).as(DocumentType.PDF).execute();
-
-            return outputStream;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @PreDestroy
-    public void cleanupConverter() {
-        localConverter.shutDown();
     }
 }
