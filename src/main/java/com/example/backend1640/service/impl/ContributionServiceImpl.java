@@ -112,7 +112,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ReadContributionDTO findOne(Long id) {
         Contribution contribution = validateContributionNotExists(id);
         ReadContributionDTO readContributionDTO = new ReadContributionDTO();
@@ -139,7 +139,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReadContributionDTO> findAll() {
         List<Contribution> contributions = contributionRepository.findAll();
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
@@ -174,7 +174,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id) {
         User coordinator = validateUserNotExists(id);
         if (coordinator.getUserRole() != UserRoleEnum.COORDINATOR) {
@@ -212,7 +212,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReadContributionByStatusApprovedDTO> findByStatusApproved(String status) {
         StatusEnum statusEnum = StatusEnum.valueOf(status.toUpperCase());
         List<Contribution> contributions = contributionRepository.findByStatus(statusEnum);
