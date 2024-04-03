@@ -153,7 +153,7 @@ public class DocumentController {
         Document document = documentOptional.get();
 
         // Check if the document is already a PDF
-        if (document.getType().equalsIgnoreCase("pdf")) {
+        if (document.getType().equalsIgnoreCase("application/pdf")) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .header("Content-Disposition", "inline; filename=\"" + document.getName() + "\"")
@@ -177,14 +177,7 @@ public class DocumentController {
         try {
             InputStream inputStream = new ByteArrayInputStream(document.getData());
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            if (document.getType().equalsIgnoreCase("docx")) {
-                localConverter.convert(inputStream).as(DocumentType.DOCX).to(outputStream).as(DocumentType.PDF).execute();
-            } else if (document.getType().equalsIgnoreCase("doc")) {
-                // Handle .doc files using Apache POI
-                XWPFDocument docxDocument = new XWPFDocument(inputStream);
-                docxDocument.write(outputStream);
-            }
+            localConverter.convert(inputStream).as(DocumentType.DOCX).to(outputStream).as(DocumentType.PDF).execute();
 
             return outputStream;
         } catch (Exception e) {
