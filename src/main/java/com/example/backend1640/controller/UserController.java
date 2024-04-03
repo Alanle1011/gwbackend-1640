@@ -23,7 +23,7 @@ public class UserController {
         return userService.createUser(userDTO);
     }
 
-    @PostMapping(path = "/login")
+    @PostMapping("login")
     public LoginDTO loginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
         return userService.loginUser(loginRequestDTO);
     }
@@ -33,13 +33,18 @@ public class UserController {
         return userService.findAll();
     }
 
-    @PutMapping("/update/{id}")
+    @GetMapping("{id}")
+    public ReadUserByIdDTO getUserById(@PathVariable long id) {
+        return userService.findById(id);
+    }
+
+    @PutMapping("update/{id}")
     public UserDTO updateUser(@PathVariable long id, @Validated @RequestBody UpdateUserDTO userDTO) {
         userDTO.setId(id);
         return userService.updateUser(userDTO);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("delete/{id}")
     public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
     }
