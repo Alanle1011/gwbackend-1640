@@ -112,7 +112,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ReadContributionDTO findOne(Long id) {
         Contribution contribution = validateContributionNotExists(id);
         ReadContributionDTO readContributionDTO = new ReadContributionDTO();
@@ -139,7 +139,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReadContributionDTO> findAll() {
         List<Contribution> contributions = contributionRepository.findAll();
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
@@ -174,7 +174,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReadContributionByCoordinatorIdDTO> findByCoordinatorId(Long id) {
         User coordinator = validateUserNotExists(id);
         if (coordinator.getUserRole() != UserRoleEnum.COORDINATOR) {
@@ -213,6 +213,43 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Override
     @Transactional
+    public List<ReadContributionByUserIdDTO> findByUserId(Long id) {
+        User user = validateUserNotExists(id);
+
+        List<Contribution> contributions = contributionRepository.findByUploadedUserId(user);
+        List<ReadContributionByUserIdDTO> readContributionByUserIdDTOS = new ArrayList<>();
+
+        for (Contribution contribution : contributions) {
+            Image image = imageRepository.findByContributionId(contribution);
+            Document document = documentRepository.findByContributionId(contribution);
+            ReadContributionByUserIdDTO readContributionByUserIdDTO = new ReadContributionByUserIdDTO();
+            readContributionByUserIdDTO.setId(contribution.getId());
+            readContributionByUserIdDTO.setApprovedCoordinator(contribution.getApprovedCoordinatorId().getName());
+            readContributionByUserIdDTO.setTitle(contribution.getTitle());
+            readContributionByUserIdDTO.setContent(contribution.getContent());
+            readContributionByUserIdDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+            readContributionByUserIdDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
+            readContributionByUserIdDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+            readContributionByUserIdDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
+            readContributionByUserIdDTO.setStatus(contribution.getStatus().toString());
+            if (image != null) {
+                readContributionByUserIdDTO.setImageId(image.getId());
+            }
+            if (document != null) {
+                readContributionByUserIdDTO.setDocumentId(document.getId());
+            }
+            readContributionByUserIdDTO.setCreatedAt(contribution.getCreatedAt());
+
+            readContributionByUserIdDTOS.add(readContributionByUserIdDTO);
+        }
+
+        readContributionByUserIdDTOS.sort(Comparator.comparing(ReadContributionByUserIdDTO::getCreatedAt));
+
+        return readContributionByUserIdDTOS;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ReadContributionByStatusApprovedDTO> findByStatusApproved(String status) {
         StatusEnum statusEnum = StatusEnum.valueOf(status.toUpperCase());
         List<Contribution> contributions = contributionRepository.findByStatus(statusEnum);
