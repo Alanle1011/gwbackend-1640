@@ -4,12 +4,14 @@ import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Faculty;
+import com.example.backend1640.entity.Image;
 import com.example.backend1640.entity.User;
 import com.example.backend1640.entity.converters.StatusConverter;
 import com.example.backend1640.entity.converters.UserRoleConverter;
 import com.example.backend1640.exception.*;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.FacultyRepository;
+import com.example.backend1640.repository.ImageRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FacultyRepository facultyRepository;
     private final ContributionRepository contributionRepository;
+    private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
     private final RabbitTemplate rabbitTemplate;
 
@@ -39,10 +42,11 @@ public class UserServiceImpl implements UserService {
     @Value("${rabbitmq.routing.user}")
     private String userRountingKey;
 
-    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
+    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, ImageRepository imageRepository, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
         this.facultyRepository = facultyRepository;
         this.contributionRepository = contributionRepository;
+        this.imageRepository = imageRepository;
         this.passwordEncoder = passwordEncoder;
         this.rabbitTemplate = rabbitTemplate;
     }
@@ -156,6 +160,11 @@ public class UserServiceImpl implements UserService {
         User user = validateUserExists(id);
         ReadUserByIdDTO readUserByIdDTO = new ReadUserByIdDTO();
         BeanUtils.copyProperties(user, readUserByIdDTO);
+
+        Image userImage =validateImageExist(user);
+
+        readUserByIdDTO.setImageId(userImage.getId());
+
         if (user.getUserRole() == UserRoleEnum.STUDENT) {
             readUserByIdDTO.setFaculty(user.getFacultyId().getFacultyName());
         }
@@ -241,5 +250,14 @@ public class UserServiceImpl implements UserService {
         }
 
         return optionalUser.get();
+    }
+
+    private Image validateImageExist(User user) {
+        Image optionalImage = imageRepository.findByUserId(user);
+        if (optionalImage == null) {
+            throw new UserImageNotExistsException("User Image does not exist");
+        }
+
+        return optionalImage;
     }
 }

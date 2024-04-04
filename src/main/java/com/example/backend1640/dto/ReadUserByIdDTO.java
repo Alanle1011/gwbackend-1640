@@ -9,6 +9,7 @@ import lombok.Setter;
 public class ReadUserByIdDTO {
     private Long id;
     private UserRoleEnum userRole;
+    private Long imageId;
     private String name;
     private String email;
     private String faculty;
