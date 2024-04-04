@@ -147,6 +147,10 @@ public class UserServiceImpl implements UserService {
         for (User user : users) {
             ReadUserDTO readUserDTO = new ReadUserDTO();
             BeanUtils.copyProperties(user, readUserDTO);
+
+            Image userImage =validateImageExist(user);
+            readUserDTO.setImageId(userImage.getId());
+
             if (user.getUserRole() == UserRoleEnum.STUDENT) {
                 readUserDTO.setFaculty(user.getFacultyId().getFacultyName());
             }
@@ -162,7 +166,6 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(user, readUserByIdDTO);
 
         Image userImage =validateImageExist(user);
-
         readUserByIdDTO.setImageId(userImage.getId());
 
         if (user.getUserRole() == UserRoleEnum.STUDENT) {
