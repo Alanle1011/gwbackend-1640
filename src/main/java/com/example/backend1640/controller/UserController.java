@@ -1,7 +1,6 @@
 package com.example.backend1640.controller;
 
 import com.example.backend1640.dto.*;
-import com.example.backend1640.entity.User;
 import com.example.backend1640.service.UserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

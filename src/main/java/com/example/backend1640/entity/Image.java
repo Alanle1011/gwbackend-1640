@@ -23,7 +23,7 @@ public class Image {
     @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
     private Contribution contributionId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User userId;
 

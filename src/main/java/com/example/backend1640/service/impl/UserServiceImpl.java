@@ -5,14 +5,15 @@ import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Faculty;
 import com.example.backend1640.entity.User;
-import com.example.backend1640.exception.FacultyNotExistsException;
-import com.example.backend1640.exception.MissingStudentFacultyException;
-import com.example.backend1640.exception.UserAlreadyExistsException;
-import com.example.backend1640.exception.UserNotExistsException;
+import com.example.backend1640.entity.converters.StatusConverter;
+import com.example.backend1640.entity.converters.UserRoleConverter;
+import com.example.backend1640.exception.*;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.FacultyRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.UserService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -169,8 +170,15 @@ public class UserServiceImpl implements UserService {
             user.setName(userDTO.getName());
         if (userDTO.getEmail() != null)
             user.setEmail(userDTO.getEmail());
-        if (userDTO.getPassword() != null) {
-            String encodePassword = passwordEncoder.encode(userDTO.getPassword());
+        if (userDTO.getUserRole() != null) {
+            user.setUserRole(userDTO.getUserRole());
+        }
+        if (userDTO.getOldPassword() != null && userDTO.getNewPassword() != null) {
+            boolean isCorrectPassword = passwordEncoder.matches(userDTO.getOldPassword(), user.getPassword());
+            if (!isCorrectPassword) {
+                throw new WrongOldPasswordException("Wrong password");
+            }
+            String encodePassword = passwordEncoder.encode(userDTO.getNewPassword());
             user.setPassword(encodePassword);
         }
         if (user.getUserRole() == UserRoleEnum.STUDENT && userDTO.getFaculty() != null) {
