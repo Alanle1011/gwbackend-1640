@@ -1,21 +1,28 @@
 package com.example.backend1640.service.impl;
 
 import com.example.backend1640.constants.UserRoleEnum;
-import com.example.backend1640.dto.*;
+import com.example.backend1640.dto.CreateUserDTO;
+import com.example.backend1640.dto.EmailDetails;
+import com.example.backend1640.dto.LoginDTO;
+import com.example.backend1640.dto.LoginRequestDTO;
+import com.example.backend1640.dto.ReadUserByIdDTO;
+import com.example.backend1640.dto.ReadUserDTO;
+import com.example.backend1640.dto.UpdateUserDTO;
+import com.example.backend1640.dto.UserDTO;
 import com.example.backend1640.entity.Contribution;
 import com.example.backend1640.entity.Faculty;
 import com.example.backend1640.entity.Image;
 import com.example.backend1640.entity.User;
-import com.example.backend1640.entity.converters.StatusConverter;
-import com.example.backend1640.entity.converters.UserRoleConverter;
-import com.example.backend1640.exception.*;
+import com.example.backend1640.exception.FacultyNotExistsException;
+import com.example.backend1640.exception.MissingStudentFacultyException;
+import com.example.backend1640.exception.UserAlreadyExistsException;
+import com.example.backend1640.exception.UserNotExistsException;
+import com.example.backend1640.exception.WrongOldPasswordException;
 import com.example.backend1640.repository.ContributionRepository;
 import com.example.backend1640.repository.FacultyRepository;
 import com.example.backend1640.repository.ImageRepository;
 import com.example.backend1640.repository.UserRepository;
 import com.example.backend1640.service.UserService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,8 +155,10 @@ public class UserServiceImpl implements UserService {
             ReadUserDTO readUserDTO = new ReadUserDTO();
             BeanUtils.copyProperties(user, readUserDTO);
 
-            Image userImage =validateImageExist(user);
-            readUserDTO.setImageId(userImage.getId());
+            Image optionalImage = imageRepository.findByUserId(user);
+            if (optionalImage != null) {
+                readUserDTO.setImageId(optionalImage.getId());
+            }
 
             if (user.getUserRole() == UserRoleEnum.STUDENT) {
                 readUserDTO.setFaculty(user.getFacultyId().getFacultyName());
@@ -165,8 +174,10 @@ public class UserServiceImpl implements UserService {
         ReadUserByIdDTO readUserByIdDTO = new ReadUserByIdDTO();
         BeanUtils.copyProperties(user, readUserByIdDTO);
 
-        Image userImage =validateImageExist(user);
-        readUserByIdDTO.setImageId(userImage.getId());
+        Image optionalImage = imageRepository.findByUserId(user);
+        if (optionalImage != null) {
+            readUserByIdDTO.setImageId(optionalImage.getId());
+        }
 
         if (user.getUserRole() == UserRoleEnum.STUDENT) {
             readUserByIdDTO.setFaculty(user.getFacultyId().getFacultyName());
@@ -253,14 +264,5 @@ public class UserServiceImpl implements UserService {
         }
 
         return optionalUser.get();
-    }
-
-    private Image validateImageExist(User user) {
-        Image optionalImage = imageRepository.findByUserId(user);
-        if (optionalImage == null) {
-            throw new UserImageNotExistsException("User Image does not exist");
-        }
-
-        return optionalImage;
     }
 }
