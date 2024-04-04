@@ -128,6 +128,7 @@ public class ContributionServiceImpl implements ContributionService {
         readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
         readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
         readContributionDTO.setStatus(contribution.getStatus().toString());
+        readContributionDTO.setCreatedAt(contribution.getCreatedAt());
         if (image != null) {
             readContributionDTO.setImageId(image.getId());
         }

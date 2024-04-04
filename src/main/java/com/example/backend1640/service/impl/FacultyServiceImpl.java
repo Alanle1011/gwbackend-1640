@@ -64,6 +64,7 @@ public class FacultyServiceImpl implements FacultyService {
             ReadFacultyDTO readFacultyDTO = new ReadFacultyDTO();
             BeanUtils.copyProperties(faculty, readFacultyDTO);
 
+            readFacultyDTO.setId(faculty.getId());
             readFacultyDTO.setCoordinatorId(faculty.getCoordinatorId().getId().toString() + " - " + faculty.getCoordinatorId().getName());
             readFacultyDTOs.add(readFacultyDTO);
         }
