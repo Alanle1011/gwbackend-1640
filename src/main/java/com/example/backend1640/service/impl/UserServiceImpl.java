@@ -28,11 +28,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -147,6 +145,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<ReadUserDTO> findAll() {
         List<User> users = userRepository.findAll();
         List<ReadUserDTO> readUserDTOS = new ArrayList<>();
@@ -165,10 +164,14 @@ public class UserServiceImpl implements UserService {
             }
             readUserDTOS.add(readUserDTO);
         }
+
+        readUserDTOS.sort(Comparator.comparing(ReadUserDTO::getUserRole));
+
         return readUserDTOS;
     }
 
     @Override
+    @Transactional
     public ReadUserByIdDTO findById(long id) {
         User user = validateUserExists(id);
         ReadUserByIdDTO readUserByIdDTO = new ReadUserByIdDTO();
@@ -181,6 +184,7 @@ public class UserServiceImpl implements UserService {
 
         if (user.getUserRole() == UserRoleEnum.STUDENT) {
             readUserByIdDTO.setFaculty(user.getFacultyId().getFacultyName());
+            readUserByIdDTO.setFacultyId(user.getFacultyId().getId());
         }
         return readUserByIdDTO;
     }
@@ -237,6 +241,14 @@ public class UserServiceImpl implements UserService {
         return optionalFaculty.get();
     }
 
+    private Faculty validateFacultyExists(String facultyName) {
+        Optional<Faculty> optionalFaculty = facultyRepository.findByFacultyName(facultyName);
+
+        if (optionalFaculty.isEmpty()) {
+            throw new FacultyNotExistsException("Faculty does not exist");
+        }
+        return optionalFaculty.get();
+    }
 
     private void validateUserExists(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);

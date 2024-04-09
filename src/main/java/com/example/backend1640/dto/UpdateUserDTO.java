@@ -13,5 +13,5 @@ public class UpdateUserDTO {
     private String newPassword;
     private String email;
     private UserRoleEnum userRole;
-    private Long faculty;
+    private String faculty;
 }

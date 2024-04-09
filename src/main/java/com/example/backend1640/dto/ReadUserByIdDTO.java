@@ -13,4 +13,5 @@ public class ReadUserByIdDTO {
     private String name;
     private String email;
     private String faculty;
+    private Long facultyId;
 }
