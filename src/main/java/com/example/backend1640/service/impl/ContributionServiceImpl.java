@@ -21,11 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Comparator;
+import java.util.*;
 
 @Service
 public class ContributionServiceImpl implements ContributionService {
@@ -134,6 +130,12 @@ public class ContributionServiceImpl implements ContributionService {
         }
         if (document != null) {
             readContributionDTO.setDocumentId(document.getId());
+            readContributionDTO.setDocumentName(document.getName());
+            if (Objects.equals(document.getType(), "application/pdf")) {
+                readContributionDTO.setDocumentType("pdf");
+            } else {
+                readContributionDTO.setDocumentType("docx");
+            }
         }
 
         return readContributionDTO;
