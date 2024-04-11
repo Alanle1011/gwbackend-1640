@@ -5,6 +5,7 @@ import com.example.backend1640.entity.Document;
 import com.example.backend1640.service.ContributionService;
 import com.example.backend1640.service.DocumentService;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -76,29 +77,15 @@ public class DocumentController {
 
     @GetMapping("downloadAll")
     public ResponseEntity<byte[]> downloadAllDocumentsAsZip() {
-        List<Document> documents = documentService.getAllDocuments();
-        if (documents.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
-
-            for (Document document : documents) {
-                ZipEntry entry = new ZipEntry(document.getName());
-                zipOutputStream.putNextEntry(entry);
-                zipOutputStream.write(document.getData());
-                zipOutputStream.closeEntry();
+            byte[] zipData = documentService.downloadAllDocumentsAsZip();
+            if (zipData.length == 0) {
+                return ResponseEntity.notFound().build();
             }
 
-            zipOutputStream.finish();
-            zipOutputStream.close();
-
             return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"documents.zip\"")
-                    .body(outputStream.toByteArray());
-
+                    .header("Content-Disposition", "attachment: filename=\"AllDocuments.zip\"")
+                    .body(zipData);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -107,41 +94,22 @@ public class DocumentController {
 
     @GetMapping("downloadByCoordinatorId/{id}")
     public ResponseEntity<byte[]> downloadDocumentAsZip(@PathVariable long id) {
-        List<ReadContributionByCoordinatorIdDTO> contributions = contributionService.findByCoordinatorId(id);
-        if (contributions.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
-
-            for (ReadContributionByCoordinatorIdDTO contribution : contributions) {
-                if (contribution.getDocumentId() != null) {
-                    byte[] documentData = documentService.getDocument(contribution.getDocumentId()).get().getData();
-                    String documentName = documentService.getDocument(contribution.getDocumentId()).get().getName();
-
-                    ZipEntry entry = new ZipEntry(documentName);
-                    zipOutputStream.putNextEntry(entry);
-                    zipOutputStream.write(documentData);
-                    zipOutputStream.closeEntry();
-                }
+            byte[] zipData = documentService.downloadDocumentsByCoordinatorIdAsZip(id);
+            if (zipData.length == 0) {
+                return ResponseEntity.noContent().build();
             }
-
-            zipOutputStream.finish();
-            zipOutputStream.close();
 
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=\"documents.zip\"")
-                    .body(outputStream.toByteArray());
-
+                    .body(zipData);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("downloadSelectedDocuments")
+    /*@GetMapping("downloadSelectedDocuments")
     public ResponseEntity<byte[]> downloadSelectedDocuments(@RequestParam List<Long> documentIds) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -171,5 +139,5 @@ public class DocumentController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
+    }*/
 }

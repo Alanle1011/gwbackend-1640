@@ -12,6 +12,7 @@ public interface DocumentService {
     void saveDocument(MultipartFile file, String contributionId) throws IOException;
     Optional<Document> getDocument(Long id);
     List<Document> getAllDocuments();
-
     void updateDocument(MultipartFile file, String documentId);
+    byte[] downloadAllDocumentsAsZip() throws IOException;
+    byte[] downloadDocumentsByCoordinatorIdAsZip(long id) throws IOException;
 }

@@ -74,36 +74,21 @@ public class ImageController {
         Image image = imageService.getImage(id).get();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + image.getName() + "\"")
+                .header("Content-Disposition", "attachment: filename=\"" + image.getName() + "\"")
                 .body(new ByteArrayResource(image.getData()));
     }
 
     @GetMapping("downloadAll")
     public ResponseEntity<byte[]> downloadAllImagesAsZip() {
-        List<Image> images = imageService.getAllImages();
-        if (images.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ZipOutputStream zos = new ZipOutputStream(outputStream);
-
-            for (Image image : images) {
-                ZipEntry zipEntry = new ZipEntry(image.getName());
-                zipEntry.setSize(image.getData().length);
-                zos.putNextEntry(zipEntry);
-                zos.write(image.getData());
-                zos.closeEntry();
+            byte[] zipData = imageService.zipImages();
+            if (zipData.length == 0) {
+                return ResponseEntity.notFound().build();
             }
 
-            zos.finish();
-            zos.close();
-
             return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"images.zip\"")
-                    .body(outputStream.toByteArray());
+                    .header("Content-Disposition", "attachment: filename=\"images.zip\"")
+                    .body(zipData);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -115,7 +100,7 @@ public class ImageController {
         Image image = imageService.getImageByUserId(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(image.getType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + image.getName() + "\"")
+                .header("Content-Disposition", "attachment: filename=\"" + image.getName() + "\"")
                 .body(new ByteArrayResource(image.getData()));
     }
 }

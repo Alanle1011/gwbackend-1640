@@ -15,10 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 @Transactional
@@ -78,6 +81,26 @@ public class ImageServiceImpl implements ImageService {
         } else {
             throw new ImageFormatNotValidException("Image Format Not Valid");
         }
+    }
+
+    @Override
+    public byte[] zipImages() throws IOException {
+        List<Image> images = imageRepository.findAll();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+
+        for (Image image : images) {
+            ZipEntry entry = new ZipEntry(image.getName());
+            entry.setSize(image.getData().length);
+            zipOutputStream.putNextEntry(entry);
+            zipOutputStream.write(image.getData());
+            zipOutputStream.closeEntry();
+        }
+
+        zipOutputStream.finish();
+        zipOutputStream.close();
+
+        return outputStream.toByteArray();
     }
 
     @Override
