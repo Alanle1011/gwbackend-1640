@@ -215,6 +215,41 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ReadContributionPendingByCoordinatorIdDTO> findPendingContributionsByCoordinatorId(Long id) {
+        User coordinator = validateUserNotExists(id);
+        if (coordinator.getUserRole() != UserRoleEnum.COORDINATOR) {
+            throw new UserNotCoordinatorException("User is not Coordinator");
+        }
+        List<StatusEnum> statuses = Arrays.asList(StatusEnum.OPEN, StatusEnum.CLOSED, StatusEnum.FINAL_CLOSED);
+        List<Contribution> contributions = contributionRepository.findByApprovedCoordinatorIdAndStatusIn(coordinator, statuses);
+        List<ReadContributionPendingByCoordinatorIdDTO> readContributionPendingByCoordinatorIdDTOS = new ArrayList<>();
+
+        for (Contribution contribution : contributions) {
+            Image image = imageRepository.findByContributionId(contribution);
+            Document document = documentRepository.findByContributionId(contribution);
+            ReadContributionPendingByCoordinatorIdDTO readContributionPendingByCoordinatorIdDTO = new ReadContributionPendingByCoordinatorIdDTO();
+            BeanUtils.copyProperties(contribution, readContributionPendingByCoordinatorIdDTO);
+            readContributionPendingByCoordinatorIdDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+            readContributionPendingByCoordinatorIdDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
+            readContributionPendingByCoordinatorIdDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+            readContributionPendingByCoordinatorIdDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
+            readContributionPendingByCoordinatorIdDTO.setStatus(contribution.getStatus().toString());
+            if (image != null) {
+                readContributionPendingByCoordinatorIdDTO.setImageId(image.getId());
+            }
+            if (document != null) {
+                readContributionPendingByCoordinatorIdDTO.setDocumentId(document.getId());
+            }
+            readContributionPendingByCoordinatorIdDTOS.add(readContributionPendingByCoordinatorIdDTO);
+        }
+
+        readContributionPendingByCoordinatorIdDTOS.sort(Comparator.comparing(ReadContributionPendingByCoordinatorIdDTO::getCreatedAt));
+
+        return readContributionPendingByCoordinatorIdDTOS;
+    }
+
+    @Override
     @Transactional
     public List<ReadContributionByUserIdDTO> findByUserId(Long id) {
         User user = validateUserNotExists(id);

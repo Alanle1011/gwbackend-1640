@@ -18,4 +18,6 @@ public interface ContributionRepository extends JpaRepository<Contribution , Lon
     List<Contribution> findByApprovedCoordinatorId(User coordinator);
 
     List<Contribution> findByStatus(StatusEnum statusEnum);
+
+    List<Contribution> findByApprovedCoordinatorIdAndStatusIn(User coordinator, List<StatusEnum> statuses);
 }
