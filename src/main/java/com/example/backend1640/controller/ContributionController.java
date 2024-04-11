@@ -37,6 +37,11 @@ public class ContributionController {
         return contributionService.findByCoordinatorId(id);
     }
 
+    @GetMapping("coordinator/{id}/pending")
+    public List<ReadContributionPendingByCoordinatorIdDTO> getPendingContributionsByCoordinatorId(@PathVariable Long id) {
+        return contributionService.findPendingContributionsByCoordinatorId(id);
+    }
+
     @GetMapping("user/{id}")
     public List<ReadContributionByUserIdDTO> getContributionByUserId(@PathVariable Long id) {
         return contributionService.findByUserId(id);
