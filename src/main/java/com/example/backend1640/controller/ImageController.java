@@ -4,6 +4,7 @@ import com.example.backend1640.entity.Image;
 import com.example.backend1640.service.ImageService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @CrossOrigin
 @RestController
@@ -65,7 +69,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable long id) {
         Image image = imageService.getImage(id).get();
         return ResponseEntity.ok()
@@ -74,7 +78,39 @@ public class ImageController {
                 .body(new ByteArrayResource(image.getData()));
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("downloadAll")
+    public ResponseEntity<byte[]> downloadAllImagesAsZip() {
+        List<Image> images = imageService.getAllImages();
+        if (images.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(outputStream);
+
+            for (Image image : images) {
+                ZipEntry zipEntry = new ZipEntry(image.getName());
+                zipEntry.setSize(image.getData().length);
+                zos.putNextEntry(zipEntry);
+                zos.write(image.getData());
+                zos.closeEntry();
+            }
+
+            zos.finish();
+            zos.close();
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"images.zip\"")
+                    .body(outputStream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("user/{id}")
     public ResponseEntity<ByteArrayResource> getUserImage(@PathVariable long id) {
         Image image = imageService.getImageByUserId(id);
         return ResponseEntity.ok()

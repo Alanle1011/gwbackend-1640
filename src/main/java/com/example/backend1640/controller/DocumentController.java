@@ -74,6 +74,37 @@ public class DocumentController {
                 .body(new ByteArrayResource(document.getData()));
     }
 
+    @GetMapping("downloadAll")
+    public ResponseEntity<byte[]> downloadAllDocumentsAsZip() {
+        List<Document> documents = documentService.getAllDocuments();
+        if (documents.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+
+            for (Document document : documents) {
+                ZipEntry entry = new ZipEntry(document.getName());
+                zipOutputStream.putNextEntry(entry);
+                zipOutputStream.write(document.getData());
+                zipOutputStream.closeEntry();
+            }
+
+            zipOutputStream.finish();
+            zipOutputStream.close();
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"documents.zip\"")
+                    .body(outputStream.toByteArray());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("downloadByCoordinatorId/{id}")
     public ResponseEntity<byte[]> downloadDocumentAsZip(@PathVariable long id) {
         List<ReadContributionByCoordinatorIdDTO> contributions = contributionService.findByCoordinatorId(id);
