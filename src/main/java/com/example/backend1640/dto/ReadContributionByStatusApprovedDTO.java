@@ -19,5 +19,7 @@ public class ReadContributionByStatusApprovedDTO {
     private String status;
     private Long imageId;
     private Long documentId;
+    private String documentName;
+    private String documentType;
     private Date createdAt;
 }

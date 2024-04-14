@@ -315,6 +315,12 @@ public class ContributionServiceImpl implements ContributionService {
             }
             if (document != null) {
                 readContributionByStatusApprovedDTO.setDocumentId(document.getId());
+                readContributionByStatusApprovedDTO.setDocumentName(document.getName());
+                if (Objects.equals(document.getType(), "application/pdf")) {
+                    readContributionByStatusApprovedDTO.setDocumentType("pdf");
+                } else {
+                    readContributionByStatusApprovedDTO.setDocumentType("docx");
+                }
             }
             readContributionByStatusApprovedDTO.setCreatedAt(contribution.getCreatedAt());
 
