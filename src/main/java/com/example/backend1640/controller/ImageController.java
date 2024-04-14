@@ -42,8 +42,8 @@ public class ImageController {
     }
 
     @PostMapping
-    public String saveImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value = "contributionId", required=false) String contributionId, @RequestParam(value = "userId", required=false) String userId) throws IOException {
-        if (contributionId ==null && userId == null) {
+    public String saveImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value = "contributionId", required = false) String contributionId, @RequestParam(value = "userId", required = false) String userId) throws IOException {
+        if (contributionId == null && userId == null) {
             throw new IllegalArgumentException();
         }
 

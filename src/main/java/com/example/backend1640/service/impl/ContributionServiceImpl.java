@@ -18,9 +18,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -369,6 +373,39 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setStatus(statusEnum);
         contributionRepository.save(contribution);
     }
+
+    @Override
+    @Scheduled(cron = "0 0 0 23 * ?")
+    public void setContributionStatusToClosed() {
+        LocalDateTime now = LocalDateTime.now();
+        String currentMonthYear = now.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+        Optional<SubmissionPeriod> submissionPeriod = submissionPeriodRepository.findByName(currentMonthYear);
+
+        if (submissionPeriod.isPresent()) {
+            List<Contribution> contributions = contributionRepository.findBySubmissionPeriodId(submissionPeriod);
+            for (Contribution contribution : contributions) {
+                contribution.setStatus(StatusEnum.CLOSED);
+                contributionRepository.save(contribution);
+            }
+        }
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 0 L * ?")
+    public void setContributionStatusToFinalClosed() {
+        LocalDateTime now = LocalDateTime.now();
+        String currentMonthYear = now.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+        Optional<SubmissionPeriod> currentSubmissionPeriod = submissionPeriodRepository.findByName(currentMonthYear);
+
+        if (currentSubmissionPeriod.isPresent()) {
+            List<Contribution> contributions = contributionRepository.findBySubmissionPeriodId(currentSubmissionPeriod);
+            for (Contribution contribution : contributions) {
+                contribution.setStatus(StatusEnum.FINAL_CLOSED);
+                contributionRepository.save(contribution);
+            }
+        }
+    }
+
 
     private Contribution validateContributionNotExists(Long id) {
         Optional<Contribution> contributionOptional = contributionRepository.findById(id);

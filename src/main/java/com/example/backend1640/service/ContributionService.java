@@ -26,4 +26,8 @@ public interface ContributionService {
     ContributionDTO updateContribution(UpdateContributionDTO contributionDTO);
 
     void setContributionStatus(Long id, String status) throws JsonProcessingException;
+
+    void setContributionStatusToClosed();
+
+    void setContributionStatusToFinalClosed();
 }

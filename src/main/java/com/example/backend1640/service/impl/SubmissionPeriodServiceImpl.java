@@ -10,10 +10,13 @@ import com.example.backend1640.exception.UserAlreadyExistsException;
 import com.example.backend1640.repository.SubmissionPeriodRepository;
 import com.example.backend1640.service.SubmissionPeriodService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,6 +98,28 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         BeanUtils.copyProperties(savedSubmissionPeriod, responseSubmissionPeriodDTO);
 
         return responseSubmissionPeriodDTO;
+    }
+
+    @Scheduled(cron = "0 0 0 1 * ?")
+    @Override
+    public void createNewSubmissionPeriod() {
+        LocalDateTime now = LocalDateTime.now();
+        String currentMonthYear = now.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+        String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        String closureDate = now.withDayOfMonth(23).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        String finalClosureDate = now.withDayOfMonth(now.toLocalDate().lengthOfMonth()).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        CreateSubmissionPeriodDTO submissionPeriodDTO = new CreateSubmissionPeriodDTO();
+        submissionPeriodDTO.setName(currentMonthYear);
+        submissionPeriodDTO.setStartDate(startDate);
+        submissionPeriodDTO.setClosureDate(closureDate);
+        submissionPeriodDTO.setFinalClosureDate(finalClosureDate);
+
+        try {
+            createSubmissionPeriod(submissionPeriodDTO);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private SubmissionPeriod validateSubmissionPeriodExists(Long id) {
