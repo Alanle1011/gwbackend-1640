@@ -14,16 +14,21 @@ services:
     networks:
       - gwbackend-net
   rabbitmq:
-    image: rabbitmq:3.10.5-management
-    container_name: 'rabbitmq'
+    image: rabbitmq:3.9-management
+    hostname: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
     networks:
       - gwbackend-net
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+
 networks:
   gwbackend-net:
     driver: bridge
