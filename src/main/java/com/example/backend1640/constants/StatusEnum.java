@@ -9,5 +9,6 @@ public enum StatusEnum {
 
     REJECTED,
 
-    APPROVED
+    APPROVED,
+    PUBLISHED;
 }

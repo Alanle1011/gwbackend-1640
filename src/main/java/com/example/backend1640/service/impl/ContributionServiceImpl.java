@@ -146,6 +146,42 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    public List<ReadContributionDTO> findAllPublished() {
+        List<Contribution> contributions = contributionRepository.findAll();
+        List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
+
+        for (Contribution contribution : contributions) {
+            if(contribution.getStatus() == StatusEnum.PUBLISHED) {
+                Image image = imageRepository.findByContributionId(contribution);
+                Document document = documentRepository.findByContributionId(contribution);
+                ReadContributionDTO readContributionDTO = new ReadContributionDTO();
+                readContributionDTO.setId(contribution.getId());
+                readContributionDTO.setApprovedCoordinator(contribution.getApprovedCoordinatorId().getName());
+                readContributionDTO.setTitle(contribution.getTitle());
+                readContributionDTO.setContent(contribution.getContent());
+                readContributionDTO.setUploadedUserId(contribution.getUploadedUserId().getId());
+                readContributionDTO.setUploadedUserName(contribution.getUploadedUserId().getName());
+                readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
+                readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
+                readContributionDTO.setStatus(contribution.getStatus().toString());
+                if (image != null) {
+                    readContributionDTO.setImageId(image.getId());
+                }
+                if (document != null) {
+                    readContributionDTO.setDocumentId(document.getId());
+                }
+                readContributionDTO.setCreatedAt(contribution.getCreatedAt());
+
+                readContributionDTOS.add(readContributionDTO);
+            }
+        }
+
+        readContributionDTOS.sort(Comparator.comparing(ReadContributionDTO::getCreatedAt));
+
+        return readContributionDTOS;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<ReadContributionDTO> findAll() {
         List<Contribution> contributions = contributionRepository.findAll();

@@ -22,6 +22,11 @@ public class ContributionController {
         return contributionService.createContribution(contributionDTO);
     }
 
+    @GetMapping("getPublished")
+    public List<ReadContributionDTO> getPublishedContributions() {
+        return contributionService.findAllPublished();
+    }
+
     @GetMapping("/{id}")
     public ReadContributionDTO getContribution(@PathVariable Long id) {
         return contributionService.findOne(id);

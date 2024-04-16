@@ -30,4 +30,6 @@ public interface ContributionService {
     void setContributionStatusToClosed();
 
     void setContributionStatusToFinalClosed();
+
+    List<ReadContributionDTO> findAllPublished();
 }
