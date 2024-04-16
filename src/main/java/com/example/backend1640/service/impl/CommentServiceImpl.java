@@ -1,5 +1,6 @@
 package com.example.backend1640.service.impl;
 
+import com.example.backend1640.constants.StatusEnum;
 import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.CommentDTO;
 import com.example.backend1640.entity.Comment;
@@ -40,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
             CommentDTO commentDTO = CommentDTO.builder()
                     .id(comment.getId())
                     .content(comment.getContent())
-                    .coordinatorName(comment.getCoordinator().getName())
+                    .coordinatorName(comment.getUser().getName())
                     .createdAt(comment.getCreatedAt())
                     .build();
             commentDTOList.add(commentDTO);
@@ -52,13 +53,25 @@ public class CommentServiceImpl implements CommentService {
     public CommentDTO createCommentByCoordinatorId(String coordinatorId, String contributionId, CommentDTO commentDTO) {
         User coordinator = validateCoordinatorNotExists(Long.valueOf(coordinatorId));
         Contribution contribution = validateContributionNotExists(Long.valueOf(contributionId));
+        Comment comment;
 
-        Comment comment = Comment.builder()
-                .coordinator(coordinator)
-                .contribution(contribution)
-                .content(commentDTO.getContent())
-                .createdAt(new Date())
-                .updatedAt(new Date()).build();
+        if (contribution.getStatus() == StatusEnum.PUBLISHED) {
+            comment = Comment.builder()
+                    .user(coordinator)
+                    .contribution(contribution)
+                    .content(commentDTO.getContent())
+                    .isPublishedContribution(true)
+                    .createdAt(new Date())
+                    .updatedAt(new Date()).build();
+        } else {
+            comment = Comment.builder()
+                    .user(coordinator)
+                    .contribution(contribution)
+                    .content(commentDTO.getContent())
+                    .isPublishedContribution(false)
+                    .createdAt(new Date())
+                    .updatedAt(new Date()).build();
+        }
 
         Comment savedComment = commentRepository.save(comment);
         CommentDTO responseCommentDTO = new CommentDTO();

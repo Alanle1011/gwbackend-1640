@@ -20,12 +20,15 @@ public class Comment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "COORDINATOR_ID", referencedColumnName = "id")
-    private User coordinator;
+    @JoinColumn(name = "USER_ID", referencedColumnName = "id")
+    private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
     private Contribution contribution;
+
+    @Column(name = "IS_PUBLISHED_CONTRIBUTION", nullable = false)
+    private Boolean isPublishedContribution;
 
     @Column(name = "CONTENT", nullable = false)
     private String content;

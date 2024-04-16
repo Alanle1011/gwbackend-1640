@@ -146,6 +146,7 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    @Transactional
     public List<ReadContributionDTO> findAllPublished() {
         List<Contribution> contributions = contributionRepository.findAll();
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
@@ -447,7 +448,6 @@ public class ContributionServiceImpl implements ContributionService {
             }
         }
     }
-
 
     private Contribution validateContributionNotExists(Long id) {
         Optional<Contribution> contributionOptional = contributionRepository.findById(id);

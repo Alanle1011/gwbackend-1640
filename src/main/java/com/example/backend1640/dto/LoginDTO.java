@@ -15,4 +15,5 @@ public class LoginDTO {
     private String faculty;
     private String email;
     private UserRoleEnum role;
+    private Long imageId;
 }

@@ -56,6 +56,18 @@ public class UserServiceImpl implements UserService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    public static String alphaNumericString(int len) {
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+        Random random = new Random();
+
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(AlphaNumericString.charAt(random.nextInt(AlphaNumericString.length())));
+        }
+
+        return sb.toString();
+    }
+
     @Override
     public UserDTO createUser(CreateUserDTO userDTO) {
         if (userDTO.getUserRole() == UserRoleEnum.STUDENT && userDTO.getFaculty() == null) {
@@ -64,7 +76,8 @@ public class UserServiceImpl implements UserService {
 
         validateUserExists(userDTO.getEmail());
         User user = new User();
-        String encodePassword = passwordEncoder.encode(userDTO.getPassword());
+        String generatedPassword = alphaNumericString(8);
+        String encodePassword = passwordEncoder.encode(generatedPassword);
         if (userDTO.getUserRole() == UserRoleEnum.STUDENT) {
             Faculty faculty = validateFacultyExists(userDTO.getFaculty());
             user.setFacultyId(faculty);
@@ -84,27 +97,28 @@ public class UserServiceImpl implements UserService {
 
         //Send Email
         if (savedUser.getUserRole() == UserRoleEnum.STUDENT) {
-
             rabbitTemplate.convertAndSend(exchange,
                     userRountingKey,
                     EmailDetails.builder()
-                            .messageBody("Your account have been Successful CREATED with mail: " + savedUser.getEmail() + "\n" +
-                                    "Password: " + userDTO.getPassword() + "\n" +
+                            .messageBody("Your account has been CREATED SUCCESSFULLY with email: " + savedUser.getEmail() + "\n" +
+                                    "Password: " + generatedPassword + "\n" +
                                     "Name: " + userDTO.getName() + "\n" +
                                     "Role: " + userDTO.getUserRole() + "\n" +
-                                    "Faculty: " + user.getFacultyId().getFacultyName() + "\n"
+                                    "Faculty: " + user.getFacultyId().getFacultyName() + "\n" + "\n" +
+                                    "Please CHANGE YOUR PASSWORD after login" + "\n"
                             )
                             .recipient(user.getEmail())
-                            .subject("REGISTRATION SUCCESS")
+                            .subject("STUDENT REGISTRATION SUCCESS")
                             .build());
         } else {
             rabbitTemplate.convertAndSend(exchange,
                     userRountingKey,
                     EmailDetails.builder()
-                            .messageBody("Your account have been Successful CREATED with mail: " + savedUser.getEmail() + "\n" +
-                                    "Password: " + userDTO.getPassword() + "\n" +
+                            .messageBody("Your account have been CREATED SUCCESSFULLY with email: " + savedUser.getEmail() + "\n" +
+                                    "Password: " + generatedPassword + "\n" +
                                     "Name: " + userDTO.getName() + "\n" +
-                                    "Role: " + userDTO.getUserRole() + "\n"
+                                    "Role: " + userDTO.getUserRole() + "\n" + "\n" +
+                                    "Please CHANGE YOUR PASSWORD after login" + "\n"
                             )
                             .recipient(user.getEmail())
                             .subject("USER REGISTRATION SUCCESS")
@@ -114,11 +128,13 @@ public class UserServiceImpl implements UserService {
         return responseUserDTO;
     }
 
-
     @Override
+    @Transactional
     public LoginDTO loginUser(LoginRequestDTO loginRequestDTO) {
         User user = validateUserNotExists(loginRequestDTO.getEmail());
         boolean isCorrectPassword = passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword());
+
+        Image image = imageRepository.findByUserId(user);
 
         if (!isCorrectPassword) {
             throw new UserNotExistsException("Wrong password");
@@ -140,8 +156,11 @@ public class UserServiceImpl implements UserService {
         loginDTO.setEmail(optionalUser.get().getEmail());
         loginDTO.setRole(optionalUser.get().getUserRole());
 
-        return loginDTO;
+        if (image != null) {
+            loginDTO.setImageId(image.getId());
+        }
 
+        return loginDTO;
     }
 
     @Override
