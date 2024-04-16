@@ -24,9 +24,13 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @GetMapping("contribution/{id}")
-    public List<CommentDTO> getCommentByContributionId(@PathVariable Long id) {
-        return commentService.findByContributionId(id);
+    @GetMapping("contribution/private/{id}")
+    public List<CommentDTO> getPrivateCommentByContributionId(@PathVariable Long id) {
+        return commentService.findPrivateByContributionId(id);
+    }
+    @GetMapping("contribution/public/{id}")
+    public List<CommentDTO> getPublicCommentByContributionId(@PathVariable Long id) {
+        return commentService.findPublicByContributionId(id);
     }
 
     @PostMapping()
