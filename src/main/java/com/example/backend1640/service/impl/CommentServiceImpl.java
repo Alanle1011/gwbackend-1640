@@ -33,18 +33,39 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> findByContributionId(Long id) {
+    public List<CommentDTO> findPrivateByContributionId(Long id) {
         List<Comment> commentList = commentRepository.getByContributionId(id);
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (Comment comment : commentList) {
-            new CommentDTO();
-            CommentDTO commentDTO = CommentDTO.builder()
-                    .id(comment.getId())
-                    .content(comment.getContent())
-                    .coordinatorName(comment.getUser().getName())
-                    .createdAt(comment.getCreatedAt())
-                    .build();
-            commentDTOList.add(commentDTO);
+            if(!comment.getIsPublishedContribution()){
+                new CommentDTO();
+                CommentDTO commentDTO = CommentDTO.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .coordinatorName(comment.getUser().getName())
+                        .createdAt(comment.getCreatedAt())
+                        .build();
+                commentDTOList.add(commentDTO);
+            }
+        }
+        return commentDTOList;
+    }
+
+    @Override
+    public List<CommentDTO> findPublicByContributionId(Long id) {
+        List<Comment> commentList = commentRepository.getByContributionId(id);
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            if(comment.getIsPublishedContribution()){
+                new CommentDTO();
+                CommentDTO commentDTO = CommentDTO.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .coordinatorName(comment.getUser().getName())
+                        .createdAt(comment.getCreatedAt())
+                        .build();
+                commentDTOList.add(commentDTO);
+            }
         }
         return commentDTOList;
     }
