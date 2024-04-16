@@ -35,6 +35,7 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         validateSubmissionPeriodExists(submissionPeriodDTO.getName());
         SubmissionPeriod submissionPeriod = new SubmissionPeriod();
 
+        submissionPeriod.setId(submissionPeriodDTO.getId());
         submissionPeriod.setName(submissionPeriodDTO.getName());
         submissionPeriod.setStartDate(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(submissionPeriodDTO.getStartDate()));
         submissionPeriod.setClosureDate(new SimpleDateFormat("dd/MM/yyy HH:mm").parse(submissionPeriodDTO.getClosureDate()));
@@ -56,6 +57,7 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         List<ReadSubmissionPeriodDTO> readSubmissionPeriodDTOs = new ArrayList<>();
         for (SubmissionPeriod submissionPeriod : submissionPeriods) {
             ReadSubmissionPeriodDTO readSubmissionPeriodDTO = new ReadSubmissionPeriodDTO();
+            readSubmissionPeriodDTO.setId(submissionPeriod.getId());
             readSubmissionPeriodDTO.setName(submissionPeriod.getName());
             String startDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(submissionPeriod.getStartDate());
             readSubmissionPeriodDTO.setStartDate(startDate);
@@ -100,26 +102,26 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         return responseSubmissionPeriodDTO;
     }
 
-    @Scheduled(cron = "0 0 0 1 * ?")
+//    @Scheduled(cron = "0 0 0 1 * ?")
     @Override
     public void createNewSubmissionPeriod() {
-        LocalDateTime now = LocalDateTime.now();
-        String currentMonthYear = now.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-        String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        String closureDate = now.withDayOfMonth(23).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        String finalClosureDate = now.withDayOfMonth(now.toLocalDate().lengthOfMonth()).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-
-        CreateSubmissionPeriodDTO submissionPeriodDTO = new CreateSubmissionPeriodDTO();
-        submissionPeriodDTO.setName(currentMonthYear);
-        submissionPeriodDTO.setStartDate(startDate);
-        submissionPeriodDTO.setClosureDate(closureDate);
-        submissionPeriodDTO.setFinalClosureDate(finalClosureDate);
-
-        try {
-            createSubmissionPeriod(submissionPeriodDTO);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        LocalDateTime now = LocalDateTime.now();
+//        String currentMonthYear = now.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+//        String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+//        String closureDate = now.withDayOfMonth(23).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+//        String finalClosureDate = now.withDayOfMonth(now.toLocalDate().lengthOfMonth()).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+//
+//        CreateSubmissionPeriodDTO submissionPeriodDTO = new CreateSubmissionPeriodDTO();
+//        submissionPeriodDTO.setName(currentMonthYear);
+//        submissionPeriodDTO.setStartDate(startDate);
+//        submissionPeriodDTO.setClosureDate(closureDate);
+//        submissionPeriodDTO.setFinalClosureDate(finalClosureDate);
+//
+//        try {
+//            createSubmissionPeriod(submissionPeriodDTO);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private SubmissionPeriod validateSubmissionPeriodExists(Long id) {

@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReadSubmissionPeriodDTO {
+    private Long id;
     private String name;
     private String startDate;
     private String closureDate;
