@@ -10,5 +10,5 @@ public enum StatusEnum {
     REJECTED,
 
     APPROVED,
-    PUBLISHED;
+    PUBLISHED,
 }
