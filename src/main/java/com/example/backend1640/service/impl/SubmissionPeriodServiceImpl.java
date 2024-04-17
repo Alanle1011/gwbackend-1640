@@ -1,9 +1,6 @@
 package com.example.backend1640.service.impl;
 
-import com.example.backend1640.dto.CreateSubmissionPeriodDTO;
-import com.example.backend1640.dto.ReadSubmissionPeriodDTO;
-import com.example.backend1640.dto.SubmissionPeriodDTO;
-import com.example.backend1640.dto.UpdateSubmissionPeriodDTO;
+import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.SubmissionPeriod;
 import com.example.backend1640.exception.SubmissionPeriodNotExistsException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
@@ -121,6 +118,22 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    @Override
+    public ReadSubmissionPeriodByIdDTO findSubmissionPeriodById(Long id) {
+        SubmissionPeriod submissionPeriod = validateSubmissionPeriodExists(id);
+        ReadSubmissionPeriodByIdDTO readSubmissionPeriodByIdDTO = new ReadSubmissionPeriodByIdDTO();
+        readSubmissionPeriodByIdDTO.setId(submissionPeriod.getId());
+        readSubmissionPeriodByIdDTO.setName(submissionPeriod.getName());
+        String startDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(submissionPeriod.getStartDate());
+        readSubmissionPeriodByIdDTO.setStartDate(startDate);
+        String closureDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(submissionPeriod.getClosureDate());
+        readSubmissionPeriodByIdDTO.setClosureDate(closureDate);
+        String finalClosureDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(submissionPeriod.getFinalClosureDate());
+        readSubmissionPeriodByIdDTO.setFinalClosureDate(finalClosureDate);
+
+        return readSubmissionPeriodByIdDTO;
     }
 
     private SubmissionPeriod validateSubmissionPeriodExists(Long id) {

@@ -1,9 +1,6 @@
 package com.example.backend1640.service;
 
-import com.example.backend1640.dto.CreateSubmissionPeriodDTO;
-import com.example.backend1640.dto.ReadSubmissionPeriodDTO;
-import com.example.backend1640.dto.SubmissionPeriodDTO;
-import com.example.backend1640.dto.UpdateSubmissionPeriodDTO;
+import com.example.backend1640.dto.*;
 
 import java.text.ParseException;
 import java.util.List;
@@ -19,4 +16,6 @@ public interface SubmissionPeriodService {
     SubmissionPeriodDTO updateSubmissionPeriod(UpdateSubmissionPeriodDTO submissionPeriodDTO) throws ParseException;
 
     void createNewSubmissionPeriod();
+
+    ReadSubmissionPeriodByIdDTO findSubmissionPeriodById(Long id);
 }
