@@ -8,7 +8,6 @@ import java.util.Date;
 @Getter
 @Setter
 public class CreateSubmissionPeriodDTO {
-    private Long id;
     private String name;
     private String startDate;
     private String closureDate;

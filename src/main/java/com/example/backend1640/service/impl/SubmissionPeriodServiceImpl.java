@@ -35,7 +35,6 @@ public class SubmissionPeriodServiceImpl implements SubmissionPeriodService {
         validateSubmissionPeriodExists(submissionPeriodDTO.getName());
         SubmissionPeriod submissionPeriod = new SubmissionPeriod();
 
-        submissionPeriod.setId(submissionPeriodDTO.getId());
         submissionPeriod.setName(submissionPeriodDTO.getName());
         submissionPeriod.setStartDate(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(submissionPeriodDTO.getStartDate()));
         submissionPeriod.setClosureDate(new SimpleDateFormat("dd/MM/yyy HH:mm").parse(submissionPeriodDTO.getClosureDate()));
