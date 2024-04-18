@@ -23,7 +23,7 @@ public class Comment {
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "CONTRIBUTION_ID", referencedColumnName = "id")
     private Contribution contribution;
 

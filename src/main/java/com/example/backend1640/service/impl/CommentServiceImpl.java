@@ -1,7 +1,6 @@
 package com.example.backend1640.service.impl;
 
 import com.example.backend1640.constants.StatusEnum;
-import com.example.backend1640.constants.UserRoleEnum;
 import com.example.backend1640.dto.CommentDTO;
 import com.example.backend1640.entity.Comment;
 import com.example.backend1640.entity.Contribution;
@@ -34,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> findPrivateByContributionId(Long id) {
-        List<Comment> commentList = commentRepository.getByContributionId(id);
+        List<Comment> commentList = commentRepository.findByContributionId(id);
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (Comment comment : commentList) {
             if(!comment.getIsPublishedContribution()){
@@ -53,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> findPublicByContributionId(Long id) {
-        List<Comment> commentList = commentRepository.getByContributionId(id);
+        List<Comment> commentList = commentRepository.findByContributionId(id);
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (Comment comment : commentList) {
             if(comment.getIsPublishedContribution()){

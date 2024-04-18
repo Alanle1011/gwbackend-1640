@@ -47,5 +47,4 @@ public class Contribution {
 
     @Column(name = "UPDATED_AT", nullable = false)
     private Date updatedAt;
-    
 }

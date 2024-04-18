@@ -6,11 +6,7 @@ import com.example.backend1640.dto.*;
 import com.example.backend1640.entity.*;
 import com.example.backend1640.entity.converters.StatusConverter;
 import com.example.backend1640.exception.*;
-import com.example.backend1640.repository.ContributionRepository;
-import com.example.backend1640.repository.DocumentRepository;
-import com.example.backend1640.repository.ImageRepository;
-import com.example.backend1640.repository.SubmissionPeriodRepository;
-import com.example.backend1640.repository.UserRepository;
+import com.example.backend1640.repository.*;
 import com.example.backend1640.service.ContributionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,12 +18,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class ContributionServiceImpl implements ContributionService {
     private final ContributionRepository contributionRepository;
     private final UserRepository userRepository;
@@ -35,6 +31,7 @@ public class ContributionServiceImpl implements ContributionService {
     private final ImageRepository imageRepository;
     private final DocumentRepository documentRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final CommentRepository commentRepository;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -42,13 +39,14 @@ public class ContributionServiceImpl implements ContributionService {
     @Value("${rabbitmq.routing.contribution}")
     private String contributionRountingKey;
 
-    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, RabbitTemplate rabbitTemplate) {
+    public ContributionServiceImpl(ContributionRepository contributionRepository, UserRepository userRepository, ImageRepository imageRepository, DocumentRepository documentRepository, SubmissionPeriodRepository submissionPeriodRepository, RabbitTemplate rabbitTemplate, CommentRepository commentRepository) {
         this.contributionRepository = contributionRepository;
         this.userRepository = userRepository;
         this.submissionPeriodRepository = submissionPeriodRepository;
         this.imageRepository = imageRepository;
         this.documentRepository = documentRepository;
         this.rabbitTemplate = rabbitTemplate;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -375,16 +373,22 @@ public class ContributionServiceImpl implements ContributionService {
     @Override
     @Transactional
     public void deleteContribution(Long id) {
-        Contribution contribution = validateContributionNotExists(id);
-        Image image = imageRepository.findByContributionId(contribution);
-        if (image != null) {
-            imageRepository.delete(image);
+        try {
+            Contribution contribution = validateContributionNotExists(id);
+            Image image = imageRepository.findByContributionId(contribution);
+            if (image != null) {
+                imageRepository.delete(image);
+            }
+            Document document = documentRepository.findByContributionId(contribution);
+            if (document != null) {
+                documentRepository.delete(document);
+            }
+            List<Comment> comments = commentRepository.findByContribution(contribution);
+            commentRepository.deleteAll(comments);
+            contributionRepository.delete(contribution);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Document document = documentRepository.findByContributionId(contribution);
-        if (document != null) {
-            documentRepository.delete(document);
-        }
-        contributionRepository.delete(contribution);
     }
 
     @Override
