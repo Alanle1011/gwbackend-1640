@@ -71,14 +71,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO createCommentByCoordinatorId(String coordinatorId, String contributionId, CommentDTO commentDTO) {
-        User coordinator = validateCoordinatorNotExists(Long.valueOf(coordinatorId));
+    public CommentDTO createCommentByCoordinatorId(String userId, String contributionId, CommentDTO commentDTO) {
+        User user = validateUserNotExists(Long.valueOf(userId));
         Contribution contribution = validateContributionNotExists(Long.valueOf(contributionId));
         Comment comment;
 
         if (contribution.getStatus() == StatusEnum.PUBLISHED) {
             comment = Comment.builder()
-                    .user(coordinator)
+                    .user(user)
                     .contribution(contribution)
                     .content(commentDTO.getContent())
                     .isPublishedContribution(true)
@@ -86,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
                     .updatedAt(new Date()).build();
         } else {
             comment = Comment.builder()
-                    .user(coordinator)
+                    .user(user)
                     .contribution(contribution)
                     .content(commentDTO.getContent())
                     .isPublishedContribution(false)
@@ -101,17 +101,13 @@ public class CommentServiceImpl implements CommentService {
         return responseCommentDTO;
     }
 
-    private User validateCoordinatorNotExists(Long id) {
+    private User validateUserNotExists(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
 
         if (optionalUser.isEmpty()) {
             throw new UserNotExistsException("User Not Exists");
         }
 
-        if (optionalUser.get().getUserRole() != UserRoleEnum.COORDINATOR) {
-            throw new UserNotExistsException("User Is Not Coordinator");
-
-        }
         return optionalUser.get();
     }
 

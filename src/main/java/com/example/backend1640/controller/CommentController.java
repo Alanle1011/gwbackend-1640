@@ -34,9 +34,9 @@ public class CommentController {
     }
 
     @PostMapping()
-    public CommentDTO createCommentByCoordinatorId(@RequestParam(value = "coordinatorId", required = true) String coordinatorId,
+    public CommentDTO createCommentByCoordinatorId(@RequestParam(value = "userId", required = true) String userId,
                                                    @RequestParam(value = "contributionId", required = true) String contributionId,
                                                    @RequestBody CommentDTO commentDTO) {
-        return commentService.createCommentByCoordinatorId(coordinatorId, contributionId, commentDTO);
+        return commentService.createCommentByCoordinatorId(userId, contributionId, commentDTO);
     }
 }
