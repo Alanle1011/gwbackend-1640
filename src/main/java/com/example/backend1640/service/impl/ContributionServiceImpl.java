@@ -129,6 +129,7 @@ public class ContributionServiceImpl implements ContributionService {
         readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
         readContributionDTO.setStatus(contribution.getStatus().toString());
         readContributionDTO.setCreatedAt(contribution.getCreatedAt());
+        readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
         if (image != null) {
             readContributionDTO.setImageId(image.getId());
         }
@@ -165,6 +166,7 @@ public class ContributionServiceImpl implements ContributionService {
                 readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
                 readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
                 readContributionDTO.setStatus(contribution.getStatus().toString());
+                readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
                 if (image != null) {
                     readContributionDTO.setImageId(image.getId());
                 }
@@ -201,6 +203,7 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
             readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
             readContributionDTO.setStatus(contribution.getStatus().toString());
+            readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
             if (image != null) {
                 readContributionDTO.setImageId(image.getId());
             }

@@ -13,6 +13,7 @@ public class ReadContributionDTO {
     private String title;
     private String content;
     private Long uploadedUserId;
+    private Long uploadedUserImageId;
     private String uploadedUserName;
     private String submissionPeriod;
     private String faculty;
