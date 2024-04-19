@@ -14,6 +14,7 @@ public class ReadContributionByStatusApprovedDTO {
     private String content;
     private Long uploadedUserId;
     private String uploadedUserName;
+    private Long uploadedUserImageId;
     private String submissionPeriod;
     private String faculty;
     private String status;

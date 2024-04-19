@@ -23,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
 public class ContributionServiceImpl implements ContributionService {
     private final ContributionRepository contributionRepository;
     private final UserRepository userRepository;
@@ -117,6 +116,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         Image image = imageRepository.findByContributionId(contribution);
         Document document = documentRepository.findByContributionId(contribution);
+        Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
         readContributionDTO.setId(contribution.getId());
         readContributionDTO.setApprovedCoordinator(contribution.getApprovedCoordinatorId().getName());
         readContributionDTO.setTitle(contribution.getTitle());
@@ -127,9 +127,11 @@ public class ContributionServiceImpl implements ContributionService {
         readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
         readContributionDTO.setStatus(contribution.getStatus().toString());
         readContributionDTO.setCreatedAt(contribution.getCreatedAt());
-        readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
         if (image != null) {
             readContributionDTO.setImageId(image.getId());
+        }
+        if (userImage != null) {
+            readContributionDTO.setUploadedUserImageId(userImage.getId());
         }
         if (document != null) {
             readContributionDTO.setDocumentId(document.getId());
@@ -151,8 +153,9 @@ public class ContributionServiceImpl implements ContributionService {
         List<ReadContributionDTO> readContributionDTOS = new ArrayList<>();
 
         for (Contribution contribution : contributions) {
-            if(contribution.getStatus() == StatusEnum.PUBLISHED) {
+            if (contribution.getStatus() == StatusEnum.PUBLISHED) {
                 Image image = imageRepository.findByContributionId(contribution);
+                Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
                 Document document = documentRepository.findByContributionId(contribution);
                 ReadContributionDTO readContributionDTO = new ReadContributionDTO();
                 readContributionDTO.setId(contribution.getId());
@@ -167,6 +170,9 @@ public class ContributionServiceImpl implements ContributionService {
                 readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
                 if (image != null) {
                     readContributionDTO.setImageId(image.getId());
+                }
+                if (userImage != null) {
+                    readContributionDTO.setUploadedUserImageId(userImage.getId());
                 }
                 if (document != null) {
                     readContributionDTO.setDocumentId(document.getId());
@@ -190,6 +196,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         for (Contribution contribution : contributions) {
             Image image = imageRepository.findByContributionId(contribution);
+            Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionDTO readContributionDTO = new ReadContributionDTO();
             readContributionDTO.setId(contribution.getId());
@@ -201,9 +208,11 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionDTO.setSubmissionPeriod(contribution.getSubmissionPeriodId().getName());
             readContributionDTO.setFaculty(contribution.getUploadedUserId().getFacultyId().getFacultyName());
             readContributionDTO.setStatus(contribution.getStatus().toString());
-            readContributionDTO.setUploadedUserImageId(imageRepository.findByUserId(contribution.getUploadedUserId()).getId());
             if (image != null) {
                 readContributionDTO.setImageId(image.getId());
+            }
+            if (userImage != null) {
+                readContributionDTO.setUploadedUserImageId(userImage.getId());
             }
             if (document != null) {
                 readContributionDTO.setDocumentId(document.getId());
@@ -230,6 +239,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         for (Contribution contribution : contributions) {
             Image image = imageRepository.findByContributionId(contribution);
+            Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionByCoordinatorIdDTO readContributionByCoordinatorIdDTO = new ReadContributionByCoordinatorIdDTO();
             readContributionByCoordinatorIdDTO.setId(contribution.getId());
@@ -242,6 +252,9 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionByCoordinatorIdDTO.setStatus(contribution.getStatus().toString());
             if (image != null) {
                 readContributionByCoordinatorIdDTO.setImageId(image.getId());
+            }
+            if (userImage != null) {
+                readContributionByCoordinatorIdDTO.setUploadedUserImageId(userImage.getId());
             }
             if (document != null) {
                 readContributionByCoordinatorIdDTO.setDocumentId(document.getId());
@@ -269,6 +282,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         for (Contribution contribution : contributions) {
             Image image = imageRepository.findByContributionId(contribution);
+            Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionPendingByCoordinatorIdDTO readContributionPendingByCoordinatorIdDTO = new ReadContributionPendingByCoordinatorIdDTO();
             BeanUtils.copyProperties(contribution, readContributionPendingByCoordinatorIdDTO);
@@ -279,6 +293,9 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionPendingByCoordinatorIdDTO.setStatus(contribution.getStatus().toString());
             if (image != null) {
                 readContributionPendingByCoordinatorIdDTO.setImageId(image.getId());
+            }
+            if (userImage != null) {
+                readContributionPendingByCoordinatorIdDTO.setUploadedUserImageId(userImage.getId());
             }
             if (document != null) {
                 readContributionPendingByCoordinatorIdDTO.setDocumentId(document.getId());
@@ -301,6 +318,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         for (Contribution contribution : contributions) {
             Image image = imageRepository.findByContributionId(contribution);
+            Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionByUserIdDTO readContributionByUserIdDTO = new ReadContributionByUserIdDTO();
             readContributionByUserIdDTO.setId(contribution.getId());
@@ -314,6 +332,9 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionByUserIdDTO.setStatus(contribution.getStatus().toString());
             if (image != null) {
                 readContributionByUserIdDTO.setImageId(image.getId());
+            }
+            if (userImage != null) {
+                readContributionByUserIdDTO.setUploadedUserImageId(userImage.getId());
             }
             if (document != null) {
                 readContributionByUserIdDTO.setDocumentId(document.getId());
@@ -337,6 +358,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         for (Contribution contribution : contributions) {
             Image image = imageRepository.findByContributionId(contribution);
+            Image userImage = imageRepository.findByUserId(contribution.getUploadedUserId());
             Document document = documentRepository.findByContributionId(contribution);
             ReadContributionByStatusApprovedDTO readContributionByStatusApprovedDTO = new ReadContributionByStatusApprovedDTO();
             readContributionByStatusApprovedDTO.setId(contribution.getId());
@@ -350,6 +372,9 @@ public class ContributionServiceImpl implements ContributionService {
             readContributionByStatusApprovedDTO.setStatus(contribution.getStatus().toString());
             if (image != null) {
                 readContributionByStatusApprovedDTO.setImageId(image.getId());
+            }
+            if (userImage != null) {
+                readContributionByStatusApprovedDTO.setUploadedUserImageId(userImage.getId());
             }
             if (document != null) {
                 readContributionByStatusApprovedDTO.setDocumentId(document.getId());
@@ -405,6 +430,15 @@ public class ContributionServiceImpl implements ContributionService {
         BeanUtils.copyProperties(savedContribution, responseContributionDTO);
         responseContributionDTO.setUploadedUserId(savedContribution.getUploadedUserId().getId());
         responseContributionDTO.setId(savedContribution.getId());
+        Image image = imageRepository.findByContributionId(contribution);
+        if (image != null) {
+            responseContributionDTO.setImageId(image.getId());
+        }
+        Document document = documentRepository.findByContributionId(contribution);
+        if (document != null) {
+            responseContributionDTO.setDocumentId(document.getId());
+        }
+        responseContributionDTO.setSubmissionPeriod(savedContribution.getSubmissionPeriodId().getName());
 
         return responseContributionDTO;
     }

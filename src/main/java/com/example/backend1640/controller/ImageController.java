@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @CrossOrigin
 @RestController
@@ -60,7 +57,6 @@ public class ImageController {
         }
         return "redirect:/";
     }
-
 
     @PutMapping()
     public void updateImage(@RequestParam("images") MultipartFile[] files, @RequestParam(value = "imageId", required = true) String imageId) throws IOException {

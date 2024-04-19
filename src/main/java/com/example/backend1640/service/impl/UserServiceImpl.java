@@ -9,19 +9,13 @@ import com.example.backend1640.dto.ReadUserByIdDTO;
 import com.example.backend1640.dto.ReadUserDTO;
 import com.example.backend1640.dto.UpdateUserDTO;
 import com.example.backend1640.dto.UserDTO;
-import com.example.backend1640.entity.Contribution;
-import com.example.backend1640.entity.Faculty;
-import com.example.backend1640.entity.Image;
-import com.example.backend1640.entity.User;
+import com.example.backend1640.entity.*;
 import com.example.backend1640.exception.FacultyNotExistsException;
 import com.example.backend1640.exception.MissingStudentFacultyException;
 import com.example.backend1640.exception.UserAlreadyExistsException;
 import com.example.backend1640.exception.UserNotExistsException;
 import com.example.backend1640.exception.WrongOldPasswordException;
-import com.example.backend1640.repository.ContributionRepository;
-import com.example.backend1640.repository.FacultyRepository;
-import com.example.backend1640.repository.ImageRepository;
-import com.example.backend1640.repository.UserRepository;
+import com.example.backend1640.repository.*;
 import com.example.backend1640.service.UserService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
     private final RabbitTemplate rabbitTemplate;
+    private final CommentRepository commentRepository;
+    private final DocumentRepository documentRepository;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -47,13 +43,15 @@ public class UserServiceImpl implements UserService {
     @Value("${rabbitmq.routing.user}")
     private String userRountingKey;
 
-    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, ImageRepository imageRepository, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
+    public UserServiceImpl(UserRepository userRepository, FacultyRepository facultyRepository, ContributionRepository contributionRepository, ImageRepository imageRepository, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate, CommentRepository commentRepository, DocumentRepository documentRepository) {
         this.userRepository = userRepository;
         this.facultyRepository = facultyRepository;
         this.contributionRepository = contributionRepository;
         this.imageRepository = imageRepository;
         this.passwordEncoder = passwordEncoder;
         this.rabbitTemplate = rabbitTemplate;
+        this.commentRepository = commentRepository;
+        this.documentRepository = documentRepository;
     }
 
     public static String alphaNumericString(int len) {
@@ -244,10 +242,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(long id) {
         User user = validateUserExists(id);
+
+        Image userImage = imageRepository.findByUserId(user);
+        if (userImage != null) {
+            imageRepository.delete(userImage);
+        }
+
         List<Contribution> contributions = contributionRepository.findByUploadedUserId(user);
+        for (Contribution contribution : contributions) {
+            try {
+                Image image = imageRepository.findByContributionId(contribution);
+                Document document = documentRepository.findByContributionId(contribution);
+                if (image != null) {
+                    imageRepository.delete(image);
+                }
+                if (document != null) {
+                    documentRepository.delete(document);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         contributionRepository.deleteAll(contributions);
+
+        List<Comment> comments = commentRepository.findByUser(user);
+        commentRepository.deleteAll(comments);
+
         userRepository.delete(user);
     }
 
